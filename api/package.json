@@ -1,0 +1,22 @@
+{
+  "name": "api",
+  "version": "0.1.0",
+  "description": "Example API to source from",
+  "main": "./dist/index.js",
+  "scripts": {
+    "clean": "del-cli dist",
+    "build": "tsc",
+    "develop": "tsc -w & nodemon -q -w dist dist/index.js",
+    "serve": "node ./dist/index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "graphql": "^16.6.0",
+    "graphql-yoga": "^3.3.0"
+  },
+  "devDependencies": {
+    "del-cli": "^5.0.0",
+    "nodemon": "^2.0.20",
+    "typescript": "^4.9.4"
+  }
+}

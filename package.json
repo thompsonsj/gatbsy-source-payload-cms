@@ -1,0 +1,42 @@
+{
+  "private": true,
+  "name": "creating-source-plugin-tutorial",
+  "version": "0.1.0",
+  "description": "Companion project for the Creating a Source Plugin Gatsby tutorial",
+  "workspaces": [
+    "api",
+    "site",
+    "plugin"
+  ],
+  "scripts": {
+    "develop:api": "yarn workspace api develop",
+    "develop:plugin": "yarn workspace plugin develop",
+    "develop:site": "yarn workspace site develop",
+    "develop:deps": "npm-run-all -l -p 'develop:api' 'develop:plugin'",
+    "build:api": "yarn workspace api build",
+    "build:plugin": "yarn workspace plugin build",
+    "build:site": "yarn workspace site build",
+    "build": "npm-run-all -s 'build:plugin' 'build:api' 'serve:api' 'build:site'",
+    "serve:api": "yarn workspace api serve",
+    "serve:site": "yarn workspace site serve",
+    "start:api": "npm-run-all build:api serve:api",
+    "lint": "eslint . --ext .ts,.tsx,.js",
+    "lint:fix": "yarn lint --fix",
+    "test": "yarn workspace plugin test",
+    "clean": "npm-run-all -p 'clean:*'",
+    "clean:api": "yarn workspace api clean",
+    "clean:plugin": "yarn workspace plugin clean",
+    "clean:site": "yarn workspace site clean"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "@typescript-eslint/parser": "^5.49.0",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.8.3"
+  },
+  "packageManager": "yarn@3.3.1"
+}

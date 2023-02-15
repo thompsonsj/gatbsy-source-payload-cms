@@ -1,0 +1,40 @@
+{
+  "name": "plugin",
+  "description": "An example Gatsby source plugin",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "./dist/gatsby-node.js",
+  "files": [
+    "./dist/*",
+    "gatsby-node.js"
+  ],
+  "scripts": {
+    "clean": "del-cli dist",
+    "build": "tsc",
+    "develop": "tsc --watch",
+    "test": "jest",
+    "prepare": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "gatsby",
+    "gatsby-plugin"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.8"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.4.0",
+    "del-cli": "^5.0.0",
+    "gatsby": "next",
+    "gatsby-plugin-utils": "next",
+    "jest": "^29.4.0",
+    "ts-jest": "^29.0.5",
+    "typescript": "^4.9.4"
+  },
+  "peerDependencies": {
+    "gatsby": "^5.0.0"
+  }
+}

@@ -1,0 +1,55 @@
+:root {
+  --background: hsl(0, 0%, 98%);
+  --text: hsl(0, 0%, 15%);
+  --primary: hsl(270, 50%, 40%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: hsl(270, 3%, 14%);
+    --text: hsl(0, 0%, 98%);
+    --primary: hsl(270, 73%, 67%);
+  }
+}
+
+html {
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+main {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  padding: 2rem;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-gap: 1rem;
+  justify-content: space-between;
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary);
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.posts-card {
+  display: grid;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 1px dashed;
+  border-radius: 0.25rem;
+}
+
+.posts-card h2 {
+  margin-top: 0;
+}
+
+.image {
+  padding: 2rem 0;
+}

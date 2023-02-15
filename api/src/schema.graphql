@@ -1,0 +1,32 @@
+type Query {
+  posts: [Post!]!
+  authors: [Author!]!
+}
+
+type Mutation {
+  createPost(slug: String!, title: String!): Post!
+  updatePost(id: ID!, title: String!): Post
+  deletePost(id: ID!): Post
+}
+
+type Post {
+  id: ID!
+  slug: String!
+  title: String!
+  image: PostImage!
+  # For the sake of showing the `createSchemaCustomization` API inside the plugin, this schema doesn't define foreign-key relation
+  # Normally you'd write this: author: Author!
+  author: String!
+}
+
+type PostImage {
+  url: String!
+  alt: String!
+  width: Int!
+  height: Int!
+}
+
+type Author {
+  id: ID!
+  name: String!
+}

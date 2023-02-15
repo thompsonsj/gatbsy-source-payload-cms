@@ -1,0 +1,15 @@
+node_modules
+dist
+public
+.cache
+*.log
+gatsby-types.d.ts
+dist
+
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
