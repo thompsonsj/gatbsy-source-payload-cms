@@ -114,7 +114,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   )
 
   if (errors) {
-    reporter.panicOnBuild({
+    sourcingTimer.panicOnBuild({
       id: ERROR_CODES.GraphQLSourcing,
       context: {
         sourceMessage: `Sourcing from the GraphQL API failed`,
