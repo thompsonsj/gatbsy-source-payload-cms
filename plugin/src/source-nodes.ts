@@ -162,7 +162,7 @@ interface INodeBuilderArgs {
   input: NodeBuilderInput
 }
 
-function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
+export function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
   const id = gatsbyApi.createNodeId(`${input.type}-${input.data.id}`)
 
   const extraData: Record<string, unknown> = {}
@@ -203,7 +203,7 @@ function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
   gatsbyApi.actions.createNode(node)
 }
 
-function createAssetNode(gatsbyApi: SourceNodesArgs, data: IPostImageInput) {
+export function createAssetNode(gatsbyApi: SourceNodesArgs, data: IPostImageInput) {
   const id = gatsbyApi.createNodeId(`${NODE_TYPES.PluginAsset}-${data.url}`)
 
   /**

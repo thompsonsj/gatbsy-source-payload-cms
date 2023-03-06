@@ -1,4 +1,4 @@
-import { createAssetNode, createAuthorNode, createPostNode } from "../source-nodes"
+import { createAssetNode, nodeBuilder } from "../source-nodes"
 import { authorFixture, postFixture, postImageFixture } from "./fixtures"
 
 const nodeIdPlaceholder = `unique-id`
@@ -36,9 +36,9 @@ describe(`sourceNodes`, () => {
     jest.resetAllMocks()
   })
 
-  describe(`createAuthorNode`, () => {
-    it(`should create correct node shape`, () => {
-      createAuthorNode(gatsbyApi, authorFixture)
+  describe(`nodeBuilder`, () => {
+    it(`should create correct Author node`, () => {
+      nodeBuilder({ gatsbyApi, input: { type: `Author`, data: authorFixture } })
 
       expect(gatsbyApi.actions.createNode.mock.calls[0][0]).toMatchInlineSnapshot(`
         {
@@ -54,10 +54,8 @@ describe(`sourceNodes`, () => {
         }
       `)
     })
-  })
-  describe(`createPostNode`, () => {
-    it(`should create correct node shape`, () => {
-      createPostNode(gatsbyApi, postFixture)
+    it(`should create correct Post node`, () => {
+      nodeBuilder({ gatsbyApi, input: { type: `Post`, data: postFixture } })
 
       expect(gatsbyApi.actions.createNode.mock.calls[0][0]).toMatchInlineSnapshot(`
         {
