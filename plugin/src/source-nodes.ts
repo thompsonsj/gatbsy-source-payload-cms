@@ -145,11 +145,11 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
    * Iterate over the data and create nodes
    */
   for (const post of posts) {
-    nodeBuilder({ gatsbyApi, input: { type: `Post`, data: post } })
+    nodeBuilder({ gatsbyApi, input: { type: NODE_TYPES.Post, data: post } })
   }
 
   for (const author of authors) {
-    nodeBuilder({ gatsbyApi, input: { type: `Author`, data: author } })
+    nodeBuilder({ gatsbyApi, input: { type: NODE_TYPES.Author, data: author } })
   }
 
   sourcingTimer.end()
@@ -230,7 +230,7 @@ export function createAssetNode(gatsbyApi: SourceNodesArgs, data: IPostImageInpu
      */
     width: data.width,
     height: data.height,
-    placeholderUrl: `${data.url}?w=%width%&h=%height%`,
+    placeholderUrl: `${data.url}&w=%width%&h=%height%`,
     alt: data.alt,
     parent: null,
     children: [],

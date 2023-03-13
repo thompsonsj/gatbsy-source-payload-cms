@@ -39,7 +39,10 @@ export const createSchemaCustomization: GatsbyNode[`createSchemaCustomization`] 
     }
 
     type ${NODE_TYPES.PluginAsset} implements Node & RemoteFile {
+      url: String!
       alt: String!
+      width: Int!
+      height: Int!
     }
   `)
 
