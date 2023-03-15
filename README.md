@@ -1,4 +1,4 @@
-# creating-source-plugin-tutorial (WIP)
+# creating-source-plugin-tutorial
 
 Companion project for the "Creating a Source Plugin" Gatsby tutorial.
 
