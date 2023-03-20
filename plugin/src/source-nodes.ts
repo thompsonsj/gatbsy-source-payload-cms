@@ -204,7 +204,7 @@ export function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
 }
 
 export function createAssetNode(gatsbyApi: SourceNodesArgs, data: IPostImageInput) {
-  const id = gatsbyApi.createNodeId(`${NODE_TYPES.PluginAsset}-${data.url}`)
+  const id = gatsbyApi.createNodeId(`${NODE_TYPES.Asset}-${data.url}`)
 
   /**
    * For Image CDN and the "RemoteFile" interface, these fields are required:
@@ -235,7 +235,7 @@ export function createAssetNode(gatsbyApi: SourceNodesArgs, data: IPostImageInpu
     parent: null,
     children: [],
     internal: {
-      type: NODE_TYPES.PluginAsset,
+      type: NODE_TYPES.Asset,
       contentDigest: gatsbyApi.createContentDigest(data),
     },
   } satisfies IRemoteImageNodeInput

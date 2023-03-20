@@ -1,7 +1,7 @@
 export const NODE_TYPES = {
   Post: `Post`,
   Author: `Author`,
-  PluginAsset: `PluginAsset`,
+  Asset: `Asset`,
 } as const
 
 export const CACHE_KEYS = {
