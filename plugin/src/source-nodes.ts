@@ -121,6 +121,8 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
         graphqlError: errors[0].message,
       },
     })
+    
+    return
   }
 
   /**
