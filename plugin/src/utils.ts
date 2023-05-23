@@ -20,3 +20,5 @@ export async function fetchGraphQL<T>(endpoint: string, query: string): Promise<
 
   return await response.json()
 }
+
+export const isString = (value) => typeof value === `string` || value instanceof String

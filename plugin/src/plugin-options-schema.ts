@@ -10,6 +10,35 @@ import type { ObjectSchema } from "gatsby-plugin-utils"
  */
 export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }): ObjectSchema => {
   return Joi.object({
-    endpoint: Joi.string().uri().required().description(`The endpoint of your GraphQL API`),
+    // Required: Endpoint. e.g. https://mycompany.payload.app/api
+    endpoint: Joi.string().uri().required().description(`The endpoint of your Payload CMS API`),
+    // Define the collection slugs to fetch. e.g. [`posts`, `authors`, `tags`]
+    // Use an object instead of a string to define locales. e.g. [{slug: `posts`, locales: [`en`, `fr_FR`]}]
+    collectionTypes: Joi.array().items(
+      Joi.alternatives(
+        Joi.string(),
+        Joi.object({
+          slug: Joi.string(),
+          locales: Joi.array().items(Joi.string()),
+          params: Joi.array().items(Joi.string()),
+        })
+      )
+    ),
+    // Define the global slugs to fetch. e.g. [`menu`]
+    globalTypes: Joi.array().items(
+      Joi.alternatives(
+        Joi.string(),
+        Joi.object({
+          slug: Joi.string(),
+          locales: Joi.array().items(Joi.string()),
+          params: Joi.array().items(Joi.string()),
+        })
+      )
+    ),
+    // Optional. Access token. Use if your API is protected.
+    accessToken: Joi.string(),
+    // Optional. Throttle parallel requests.
+    maxParallelRequests: Joi.number(),
+    fallbackLocale: Joi.string(),
   })
 }

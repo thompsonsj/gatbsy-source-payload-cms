@@ -2,9 +2,14 @@ import type { GatsbyNode, SourceNodesArgs, NodeInput } from "gatsby"
 import type { IRemoteImageNodeInput } from "gatsby-plugin-utils"
 import type { IAuthorInput, IPostInput, IPluginOptionsInternal, IPostImageInput, NodeBuilderInput } from "./types"
 import { CACHE_KEYS, ERROR_CODES, NODE_TYPES } from "./constants"
-import { fetchGraphQL } from "./utils"
+import { createAxiosInstance } from "./axios-instance"
+import { fetchEntity } from "./fetch"
+import { fetchGraphQL, isString } from "./utils"
+import type { CollectionOptions } from "./fetch"
 
 let isFirstSource = true
+
+const LAST_FETCHED_KEY = `updatedAt`
 
 /**
  * The sourceNodes API is the heart of a Gatsby source plugin. This is where data is ingested and transformed into Gatsby's data layer.
@@ -14,6 +19,9 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   const { actions, reporter, cache, getNodes } = gatsbyApi
   const { touchNode } = actions
   const { endpoint } = pluginOptions
+  let { collectionTypes, globalTypes } = pluginOptions
+
+  reporter.info(`Payload CMS base URL: ${endpoint}`)
 
   /**
    * It's good practice to give your users some feedback on progress and status. Instead of printing individual lines, use the activityTimer API.
@@ -74,56 +82,51 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
    */
   reporter.verbose(`[plugin] Last fetched date: ${lastFetchedDate}`)
 
-  interface IApiResponse {
-    data: {
-      posts: Array<IPostInput>
-      authors: Array<IAuthorInput>
-    }
-    errors?: Array<{
-      message: string
-      locations: Array<unknown>
-    }>
+  const axiosInstance = createAxiosInstance(pluginOptions)
+
+  const context = {
+    axiosInstance,
+    ...gatsbyApi,
   }
 
-  /**
-   * Fetch data from the example API. This will differ from your implementation and personal preferences on e.g. which library to use.
-   * A good general recommendation is: https://github.com/sindresorhus/got
-   */
-  const { data, errors } = await fetchGraphQL<IApiResponse>(
-    endpoint,
-    `#graphql
-      query FetchApi {
-        posts {
-          id
-          slug
-          title
-          image {
-            url
-            alt
-            width
-            height
-          }
-          author
-        }
-        authors {
-          id
-          name
-        }
+  // collectionTypes and globalTypes always an array
+  if (!Array.isArray(globalTypes)) {
+    globalTypes = []
+  }
+  if (!Array.isArray(collectionTypes)) {
+    collectionTypes = []
+  }
+
+  // convert string collectionTypes and globalTypes to object
+  const normalizedGlobalTypes: Array<CollectionOptions> = globalTypes.map((globalType) => {
+    if (isString(globalType)) {
+      return {
+        endpoint: new URL(`globals/${globalType}`, endpoint).href,
       }
-    `
-  )
+    }
+    return {
+      endpoint: new URL(`globals/${globalType.slug}`, endpoint).href,
+      ...globalType,
+    }
+  })
+  const normalizedCollectionTypes: Array<CollectionOptions> = collectionTypes.map((collectionType) => {
+    if (isString(collectionType)) {
+      return {
+        endpoint: new URL(`${collectionType}`, endpoint).href,
+      }
+    }
+    return {
+      endpoint: new URL(`${collectionType.slug}`, endpoint).href,
+      ...collectionType,
+    }
+  })
 
-  if (errors) {
-    sourcingTimer.panicOnBuild({
-      id: ERROR_CODES.GraphQLSourcing,
-      context: {
-        sourceMessage: `Sourcing from the GraphQL API failed`,
-        graphqlError: errors[0].message,
-      },
-    })
-    
-    return
-  }
+  reporter.info(normalizedGlobalTypes.map((type) => type.endpoint).join(` `))
+  reporter.info(normalizedCollectionTypes.map((type) => type.endpoint).join(` `))
+
+  const globalResults = await Promise.all(normalizedGlobalTypes.map((type) => fetchEntity(type, context)))
+
+  console.log(await globalResults)
 
   /**
    * Gatsby's cache API uses LMDB to store data inside the .cache/caches folder.
@@ -135,24 +138,22 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
    */
   await cache.set(CACHE_KEYS.Timestamp, lastFetchedDateCurrent)
 
-  const { posts = [], authors = [] } = data
-
   /**
    * Up until now the terminal output only showed "Sourcing from plugin API" and a timer. Via the "setStatus" method you can add more information to the output.
    * It'll then print "Sourcing from plugin API - Processing X posts and X authors"
    */
-  sourcingTimer.setStatus(`Processing ${posts.length} posts and ${authors.length} authors`)
+  //sourcingTimer.setStatus(`Processing ${posts.length} posts and ${authors.length} authors`)
 
   /**
    * Iterate over the data and create nodes
    */
-  for (const post of posts) {
+  for (const post of globalResults) {
     nodeBuilder({ gatsbyApi, input: { type: NODE_TYPES.Post, data: post } })
   }
 
-  for (const author of authors) {
+  /*for (const author of authors) {
     nodeBuilder({ gatsbyApi, input: { type: NODE_TYPES.Author, data: author } })
-  }
+  }*/
 
   sourcingTimer.end()
 }
@@ -170,10 +171,10 @@ export function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
   const extraData: Record<string, unknown> = {}
 
   if (input.type === `Post`) {
-    const assetId = createAssetNode(gatsbyApi, input.data.image)
+    // const assetId = createAssetNode(gatsbyApi, input.data.image)
 
     // This sets the autogenerated Node ID onto the "image" key of the Post node. Then the @link directive in the schema will work.
-    extraData.image = assetId
+    // extraData.image = assetId
   }
 
   const node = {
