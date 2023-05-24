@@ -1,6 +1,6 @@
 {
-  "name": "plugin",
-  "description": "An example Gatsby source plugin",
+  "name": "gatsby-source-payload-cms",
+  "description": "Source data from Payload CMS",
   "version": "0.1.0",
   "license": "MIT",
   "main": "./dist/gatsby-node.js",
@@ -17,7 +17,8 @@
   },
   "keywords": [
     "gatsby",
-    "gatsby-plugin"
+    "gatsby-plugin",
+    "payload-cms"
   ],
   "engines": {
     "node": ">=18.0.0"
