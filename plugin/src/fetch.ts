@@ -120,8 +120,8 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
 
     const data = response?.docs || response
 
-    const page = Number.parseInt(data.page || 1, 10)
-    const pageCount = Number.parseInt(data.totalPages || 1, 10)
+    const page = Number.parseInt(response.page || 1, 10)
+    const pageCount = Number.parseInt(response.totalPages || 1, 10)
 
     const pagesToGet = Array.from({
       length: pageCount - page,
@@ -148,11 +148,8 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
             reporter.info(fetchDataMessage(options.url, options.paramsSerializer.serialize(options.params)))
 
             try {
-              const {
-                data: { data },
-              } = await axiosInstance(fetchOptions)
-
-              return data
+              const data = await axiosInstance(fetchOptions)
+              return data.data.docs
             } catch (error) {
               reporter.panic(`Failed to fetch data from Payload ${fetchOptions.url}`, error)
             }
@@ -188,11 +185,8 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
           reporter.info(fetchDataMessage(fetchOptions.url, options.paramsSerializer.serialize(fetchOptions.params)))
 
           try {
-            const {
-              data: { data },
-            } = await axiosInstance(fetchOptions)
-
-            return data
+            const data = await axiosInstance(fetchOptions)
+            return data.data.docs
           } catch (error) {
             reporter.panic(`Failed to fetch data from Payload ${fetchOptions.url}`, error)
           }
