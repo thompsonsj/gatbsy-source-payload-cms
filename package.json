@@ -10,11 +10,11 @@
   ],
   "scripts": {
     "develop:api": "yarn workspace api develop",
-    "develop:plugin": "yarn workspace plugin develop",
+    "develop:plugin": "yarn workspace gatsby-source-payload-cms develop",
     "develop:site": "yarn workspace site develop",
     "develop:deps": "npm-run-all -l -p 'develop:api' 'develop:plugin'",
     "build:api": "yarn workspace api build",
-    "build:plugin": "yarn workspace plugin build",
+    "build:plugin": "yarn workspace gatsby-source-payload-cms build",
     "build:site": "yarn workspace site build",
     "build": "npm-run-all -s 'build:plugin' 'build:api' 'serve:api' 'build:site'",
     "serve:api": "yarn workspace api serve",

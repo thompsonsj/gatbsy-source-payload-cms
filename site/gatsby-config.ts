@@ -8,7 +8,7 @@ const config: GatsbyConfig = {
   plugins: [
     // Load the plugin with its options
     {
-      resolve: `plugin`,
+      resolve: `gatsby-source-payload-cms`,
       // You can pass any serializable options to the plugin
       options: {
         endpoint: process.env.PAYLOAD_BASE_URL,
