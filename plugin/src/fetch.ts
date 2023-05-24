@@ -9,6 +9,7 @@
 import qs from "qs"
 import { flattenDeep } from "lodash"
 import { formatEntity } from "./format-entity"
+import { fetchDataMessage } from "./utils"
 
 export type CollectionOptions = {
   endpoint: string
@@ -36,9 +37,7 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
   }
 
   try {
-    reporter.info(
-      `Starting to fetch data from Payload - ${options.url} with ${options.paramsSerializer.serialize(options.params)}`
-    )
+    reporter.info(fetchDataMessage(options.url, options.paramsSerializer.serialize(options.params)))
 
     // Handle internationalization
     const fallbackLocale = context.pluginOptions?.fallbackLocale
@@ -108,9 +107,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
   }
 
   try {
-    reporter.info(
-      `Starting to fetch data from Payload - ${options.url} with ${options.paramsSerializer.serialize(options.params)}`
-    )
+    reporter.info(fetchDataMessage(options.url, options.paramsSerializer.serialize(options.params)))
 
     /**
      * Always get non-localized response to either:
@@ -148,11 +145,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
               },
             }
 
-            reporter.info(
-              `Starting to fetch page ${page} from Payload - ${
-                fetchOptions.url
-              } with ${options.paramsSerializer.serialize(fetchOptions.params)}`
-            )
+            reporter.info(fetchDataMessage(options.url, options.paramsSerializer.serialize(options.params)))
 
             try {
               const {
@@ -192,11 +185,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
             },
           }
 
-          reporter.info(
-            `Starting to fetch page ${page} from Payload - ${
-              fetchOptions.url
-            } with ${options.paramsSerializer.serialize(fetchOptions.params)}`
-          )
+          reporter.info(fetchDataMessage(fetchOptions.url, options.paramsSerializer.serialize(fetchOptions.params)))
 
           try {
             const {

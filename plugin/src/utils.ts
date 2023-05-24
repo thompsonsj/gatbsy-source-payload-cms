@@ -1,4 +1,6 @@
 import fetch, { HeadersInit } from "node-fetch"
+import qs from "qs"
+import { isEmpty } from "lodash"
 
 const headers = {
   "Content-Type": `application/json`,
@@ -22,3 +24,11 @@ export async function fetchGraphQL<T>(endpoint: string, query: string): Promise<
 }
 
 export const isString = (value) => typeof value === `string` || value instanceof String
+
+export const fetchDataMessage = (url: string, serializedParams?: string): string => {
+  const message = [`Starting to fetch data from Payload - ${url}`]
+  if (!isEmpty(serializedParams)) {
+    message.push(`with ${serializedParams}`)
+  }
+  return message.join(` `)
+}
