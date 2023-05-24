@@ -77,6 +77,6 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
     if (error.response.status !== 404) {
       reporter.panic(`Failed to fetch data from Payload ${options.url} with ${JSON.stringify(options)}`, error)
     }
-    return {}
+    return []
   }
 }

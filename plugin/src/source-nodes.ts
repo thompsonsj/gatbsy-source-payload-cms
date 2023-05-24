@@ -158,14 +158,12 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
    * Iterate over the data and create nodes
    */
 
- globalResults.map(result => {
-    
-    result.map(global => {
+  for (const result of globalResults) {
+    for (const global of result) {
       console.log(`building global ${global.gatsbyNodeType}`)
       nodeBuilder({ gatsbyApi, input: { type: `${prefix}${upperFirst(global.gatsbyNodeType)}`, data: global } })
-    })
-  
-})
+    }
+  }
 
   /*for (const author of authors) {
     nodeBuilder({ gatsbyApi, input: { type: NODE_TYPES.Author, data: author } })
