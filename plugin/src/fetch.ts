@@ -1,5 +1,14 @@
+/**
+ * fetch entity (global) or entities (collection)
+ *
+ * Common functionality for both functions:
+ *
+ * * Add a `gatsbyNodeType` key to each entity.
+ * * If locales are defined for a global/collection, return all localized entities and add a `locale` key.
+ */
 import qs from "qs"
-import { keyBy } from "lodash"
+import { flattenDeep } from "lodash"
+import { formatEntity } from "./format-entity"
 
 export type CollectionOptions = {
   endpoint: string
@@ -27,7 +36,9 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
   }
 
   try {
-    reporter.info(`Starting to fetch data from Payload - ${query.endpoint}`)
+    reporter.info(
+      `Starting to fetch data from Payload - ${options.url} with ${options.paramsSerializer.serialize(options.params)}`
+    )
 
     // Handle internationalization
     const fallbackLocale = context.pluginOptions?.fallbackLocale
@@ -52,11 +63,11 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
             locale,
           },
         })
-        return {
-          ...localizationResponse,
+        return formatEntity({
+          data: localizationResponse,
           locale,
           gatsbyNodeType: query.type,
-        }
+        })
       })
 
       // Run queries in parallel
@@ -67,10 +78,10 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
       // Fetch default entity based on request options
       const { data } = await axiosInstance(options)
       return [
-        {
-          ...data,
+        formatEntity({
+          data,
           gatsbyNodeType: query.type,
-        },
+        }),
       ]
     }
   } catch (error) {
@@ -80,3 +91,139 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
     return []
   }
 }
+
+export const fetchEntities = async (query: CollectionOptions, context) => {
+  const { reporter, axiosInstance } = context
+
+  const params = query.params || {}
+
+  /** @type AxiosRequestConfig */
+  const options = {
+    method: `GET`,
+    url: query.endpoint,
+    params: params,
+    paramsSerializer: {
+      serialize: (parameters) => qs.stringify(parameters, { encodeValuesOnly: true }),
+    },
+  }
+
+  try {
+    reporter.info(
+      `Starting to fetch data from Payload - ${options.url} with ${options.paramsSerializer.serialize(options.params)}`
+    )
+
+    /**
+     * Always get non-localized response to either:
+     *
+     * * return non-localized collection; or
+     * * determine pagination for localized collection.
+     */
+
+    const { data: response } = await axiosInstance(options)
+
+    const data = response?.docs || response
+
+    const page = Number.parseInt(data.page || 1, 10)
+    const pageCount = Number.parseInt(data.totalPages || 1, 10)
+
+    const pagesToGet = Array.from({
+      length: pageCount - page,
+    }).map((_, index) => index + page + 1)
+
+    // Handle internationalization
+    const fallbackLocale = context.pluginOptions?.fallbackLocale
+    const locales = query.locales || []
+
+    if (locales.length > 0) {
+      const localizationsPromises = locales.map(async (locale) => {
+        const fetchPagesPromises = pagesToGet.map((page) => {
+          return (async () => {
+            const fetchOptions = {
+              ...options,
+              params: {
+                ...options.params,
+                page,
+                fallbackLocale,
+                locale,
+              },
+            }
+
+            reporter.info(
+              `Starting to fetch page ${page} from Payload - ${
+                fetchOptions.url
+              } with ${options.paramsSerializer.serialize(fetchOptions.params)}`
+            )
+
+            try {
+              const {
+                data: { data },
+              } = await axiosInstance(fetchOptions)
+
+              return data
+            } catch (error) {
+              reporter.panic(`Failed to fetch data from Payload ${fetchOptions.url}`, error)
+            }
+          })()
+        })
+        const results = await Promise.all(fetchPagesPromises)
+
+        return [...data, ...flattenDeep(results)].map((entry) =>
+          formatEntity({
+            data: entry,
+            gatsbyNodeType: query.type,
+            locale,
+          })
+        )
+      })
+
+
+      // Run queries in parallel
+      const localizationsData = await Promise.all(localizationsPromises)
+
+      return flattenDeep(localizationsData)
+    } else {
+      const fetchPagesPromises = pagesToGet.map((page) => {
+        return (async () => {
+          const fetchOptions = {
+            ...options,
+            params: {
+              ...options.params,
+              page,
+            },
+          }
+
+          reporter.info(
+            `Starting to fetch page ${page} from Payload - ${
+              fetchOptions.url
+            } with ${options.paramsSerializer.serialize(fetchOptions.params)}`
+          )
+
+          try {
+            const {
+              data: { data },
+            } = await axiosInstance(fetchOptions)
+
+            return data
+          } catch (error) {
+            reporter.panic(`Failed to fetch data from Payload ${fetchOptions.url}`, error)
+          }
+        })()
+      })
+
+      const results = await Promise.all(fetchPagesPromises)
+
+      const cleanedData = [...data, ...flattenDeep(results)].map((entry) =>
+        formatEntity({
+          data: entry,
+          gatsbyNodeType: query.type,
+        })
+      )
+
+      return cleanedData
+    }
+  } catch (error) {
+    reporter.panic(`Failed to fetch data from Payload ${options.url}`, error)
+    return []
+  }
+};
+

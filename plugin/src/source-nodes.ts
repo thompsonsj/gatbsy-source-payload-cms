@@ -3,10 +3,10 @@ import type { IRemoteImageNodeInput } from "gatsby-plugin-utils"
 import type { IAuthorInput, IPluginOptionsInternal, NodeBuilderInput } from "./types"
 import { CACHE_KEYS, ERROR_CODES, NODE_TYPES } from "./constants"
 import { createAxiosInstance } from "./axios-instance"
-import { fetchEntity } from "./fetch"
+import { fetchEntity, fetchEntities } from "./fetch"
 import { fetchGraphQL, isString } from "./utils"
 import type { CollectionOptions } from "./fetch"
-import { upperFirst } from "lodash"
+import { camelCase, upperFirst } from "lodash"
 
 let isFirstSource = true
 
@@ -126,9 +126,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
     }
   })
 
-  reporter.info(normalizedGlobalTypes.map((type) => type.endpoint).join(` `))
-  reporter.info(normalizedCollectionTypes.map((type) => type.endpoint).join(` `))
-
+  const collectionResults = await Promise.all(normalizedCollectionTypes.map((type) => fetchEntities(type, context)))
   const globalResults = await Promise.all(normalizedGlobalTypes.map((type) => fetchEntity(type, context)))
 
   //console.log(await globalResults)
@@ -157,11 +155,20 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   /**
    * Iterate over the data and create nodes
    */
-
+  for (const result of collectionResults) {
+    for (const collection of result) {
+      nodeBuilder({
+        gatsbyApi,
+        input: { type: `${prefix}${upperFirst(camelCase(collection.gatsbyNodeType))}`, data: collection },
+      })
+    }
+  }
   for (const result of globalResults) {
     for (const global of result) {
-      console.log(`building global ${global.gatsbyNodeType}`)
-      nodeBuilder({ gatsbyApi, input: { type: `${prefix}${upperFirst(global.gatsbyNodeType)}`, data: global } })
+      nodeBuilder({
+        gatsbyApi,
+        input: { type: `${prefix}${upperFirst(camelCase(global.gatsbyNodeType))}`, data: global },
+      })
     }
   }
 

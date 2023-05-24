@@ -20,7 +20,7 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
         Joi.object({
           slug: Joi.string(),
           locales: Joi.array().items(Joi.string()),
-          params: Joi.array().items(Joi.string()),
+          params: Joi.object(),
         })
       )
     ),
@@ -32,7 +32,7 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
         Joi.object({
           slug: Joi.string(),
           locales: Joi.array().items(Joi.string()),
-          params: Joi.array().items(Joi.string()),
+          params: Joi.object(),
         })
       )
     ),

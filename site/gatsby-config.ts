@@ -12,7 +12,11 @@ const config: GatsbyConfig = {
       // You can pass any serializable options to the plugin
       options: {
         endpoint: process.env.PAYLOAD_BASE_URL,
-        collectionTypes: [`events`, `landing-pages`, `policies`],
+        collectionTypes: [
+          `events`,
+          `landing-pages`,
+          { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
+        ],
         globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
         fallbackLocale: `en`,
       } satisfies IPluginOptions,
