@@ -1,16 +1,16 @@
 import type { GatsbyNode, SourceNodesArgs, NodeInput } from "gatsby"
 import type { IRemoteImageNodeInput } from "gatsby-plugin-utils"
-import type { IAuthorInput, IPluginOptionsInternal, NodeBuilderInput } from "./types"
-import { CACHE_KEYS, ERROR_CODES, NODE_TYPES } from "./constants"
+import type { IPluginOptionsInternal } from "./types"
+import { CACHE_KEYS, NODE_TYPES } from "./constants"
 import { createAxiosInstance } from "./axios-instance"
 import { fetchEntity, fetchEntities } from "./fetch"
-import { fetchGraphQL, isString } from "./utils"
+import { isString } from "./utils"
 import type { CollectionOptions } from "./fetch"
 import { camelCase, upperFirst } from "lodash"
 
 let isFirstSource = true
 
-const LAST_FETCHED_KEY = `updatedAt`
+// const LAST_FETCHED_KEY = `updatedAt`
 
 /**
  * The sourceNodes API is the heart of a Gatsby source plugin. This is where data is ingested and transformed into Gatsby's data layer.
@@ -97,7 +97,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   }
 
   // convert string collectionTypes and globalTypes to object
-  const normalizedGlobalTypes: Array<CollectionOptions> = globalTypes.map((globalType) => {
+  const normalizedGlobalTypes: Array<CollectionOptions> = (globalTypes as any).map((globalType) => {
     if (isString(globalType)) {
       return {
         endpoint: new URL(`globals/${globalType}`, endpoint).href,
@@ -110,7 +110,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
       type: globalType.slug,
     }
   })
-  const normalizedCollectionTypes: Array<CollectionOptions> = collectionTypes.map((collectionType) => {
+  const normalizedCollectionTypes: Array<CollectionOptions> = (collectionTypes as any).map((collectionType) => {
     if (isString(collectionType)) {
       return {
         endpoint: new URL(`${collectionType}`, endpoint).href,
@@ -230,7 +230,7 @@ export function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
   gatsbyApi.actions.createNode(node)
 }
 
-export function createAssetNode(gatsbyApi: SourceNodesArgs, data: IPostImageInput) {
+export function createAssetNode(gatsbyApi: SourceNodesArgs, data: any) {
   const id = gatsbyApi.createNodeId(`${NODE_TYPES.Asset}-${data.url}`)
 
   /**
