@@ -2,16 +2,18 @@
 
 Gatsby source plugin for Payload CMS.
 
-## Development
+## Usage
 
-Use two terminals.
+In your Gatsby install:
 
-- `yarn develop:site` runs a local test Gatsby installation to test and verify sourced data.
-- `yarn develop:plugin` compiles the plugin from TypeScript as you work.
+```
+# npm
+npm install gatsby-source-payload-cms
+# yarn
+yarn add gatsby-source-payload-cms
+```
 
-## Plugin options
-
-Define your endpoint and collection/global slugs in `gatsby-config`.
+Add the plugin and define your endpoint and collection/global slugs in `gatsby-config`.
 
 Collections/Globals may also be defined as an object for additional control such as defining which locales to retrieve and any REST API query parameters to include.
 
@@ -19,18 +21,28 @@ If locales is defined, your Gatbsy nodes will include a `locale` key.
 
 Example options:
 
-```
+```ts
 {
-  endpoint: process.env.PAYLOAD_BASE_URL,
-  collectionTypes: [
-    `events`,
-    `landing-pages`,
-    { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
-  ],
-  globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
-  fallbackLocale: `en`,
-}
+  resolve: `gatsby-source-payload-cms`,
+  options: {
+    endpoint: `https://yourapp.payload.app/api/`,
+    collectionTypes: [
+      `events`,
+      `landing-pages`,
+      { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
+    ],
+    globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
+    fallbackLocale: `en`,
+  },
+},
 ```
+
+## Development
+
+Use two terminals.
+
+- `yarn develop:site` runs a local test Gatsby installation to test and verify sourced data.
+- `yarn develop:plugin` compiles the plugin from TypeScript as you work.
 
 ## Engineering
 
