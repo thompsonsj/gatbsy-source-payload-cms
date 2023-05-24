@@ -6,24 +6,19 @@ export interface IAuthorInput {
   name: string
 }
 
-export interface IPostImageInput {
-  url: string
-  alt: string
-  width: number
-  height: number
+export interface IPayloadApiResponse {
+  id: string
+  createdAt?: string
+  updatedAt?: string
 }
 
-export interface IPostInput {
-  id: number
-  slug: string
-  title: string
-  image: IPostImageInput
-  author: string
+export interface IPayloadGlobalApiResponse extends IPayloadApiResponse {
+  globalType: string
 }
 
 export type NodeBuilderInput =
   | { type: typeof NODE_TYPES.Author; data: IAuthorInput }
-  | { type: typeof NODE_TYPES.Post; data: IPostInput }
+  | { type: string; data: IPayloadGlobalApiResponse }
 
 interface IPluginOptionsKeys {
   endpoint: string

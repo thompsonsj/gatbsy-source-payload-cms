@@ -1,6 +1,50 @@
-# creating-source-plugin-tutorial
+# gatsby-source-payload-cms
 
-Companion project for the "Creating a Source Plugin" Gatsby tutorial.
+Gatsby source plugin for Payload CMS.
+
+## Development
+
+Use two terminals.
+
+- `yarn develop:site` runs a local test Gatsby installation to test and verify sourced data.
+- `yarn develop:plugin` compiles the plugin from TypeScript as you work.
+
+## Plugin options
+
+Define your endpoint and collection/global slugs in `gatsby-config`.
+
+Collections/Globals may also be defined as an object for additional control such as defining which locales to retrieve and any REST API query parameters to include.
+
+If locales is defined, your Gatbsy nodes will include a `locale` key.
+
+Example options:
+
+```
+{
+  endpoint: process.env.PAYLOAD_BASE_URL,
+  collectionTypes: [
+    `events`,
+    `landing-pages`,
+    { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
+  ],
+  globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
+  fallbackLocale: `en`,
+}
+```
+
+## Engineering
+
+Developed based on:
+
+- https://www.gatsbyjs.com/docs/tutorial/creating-a-source-plugin/
+- https://github.com/gatsbyjs/creating-source-plugin-tutorial.git
+- https://github.com/gatsby-uc/plugins/tree/main/packages/gatsby-source-strapi
+
+## Points to note
+
+- `gatsbyNodeType` is a reserved key for API responses. If you have a Payload field with this name, it will be overwritten.
+
+# creating-source-plugin-tutorial
 
 ## Prerequisites
 
