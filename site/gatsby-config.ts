@@ -16,6 +16,7 @@ const config: GatsbyConfig = {
           `events`,
           `landing-pages`,
           { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
+          `logos`,
         ],
         globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
         fallbackLocale: `en`,

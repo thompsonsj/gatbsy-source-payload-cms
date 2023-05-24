@@ -1,5 +1,5 @@
 import { payloadFieldType } from "./payload-field-type"
-import { isObject } from "lodash"
+import { isPlainObject } from "lodash"
 
 interface IFormatEntry {
   data: { [key: string]: unknown }
@@ -54,7 +54,7 @@ export const parsePayloadResponse = (props: { [key: string]: any }) => {
 
     if (payloadFieldType(props[value]) === `other`) {
       // support groups
-      if (isObject(props[value])) {
+      if (isPlainObject(props[value])) {
         parsedProps[value] = parsePayloadResponse(props[value])
       } else {
         parsedProps[value] = props[value]
