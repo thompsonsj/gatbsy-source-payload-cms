@@ -1,5 +1,4 @@
 import fetch, { HeadersInit } from "node-fetch"
-import qs from "qs"
 import { isEmpty } from "lodash"
 
 const headers = {

@@ -22,8 +22,6 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   const { endpoint } = pluginOptions
   let { collectionTypes, globalTypes } = pluginOptions
 
-  reporter.info(`Payload CMS base URL: ${endpoint}`)
-
   /**
    * It's good practice to give your users some feedback on progress and status. Instead of printing individual lines, use the activityTimer API.
    * This will give your users a nice progress bar and can you give updates with the .setStatus API.
