@@ -21,6 +21,7 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
           slug: Joi.string(),
           locales: Joi.array().items(Joi.string()),
           params: Joi.object(),
+          schema: Joi.any(),
         })
       )
     ),

@@ -7,7 +7,7 @@
  * * If locales are defined for a global/collection, return all localized entities and add a `locale` key.
  */
 import qs from "qs"
-import { flattenDeep } from "lodash"
+import { flattenDeep, isEmpty } from "lodash"
 import { formatEntity } from "./format-entity"
 import { fetchDataMessage } from "./utils"
 
@@ -18,6 +18,7 @@ export type CollectionOptions = {
   /** If locales are set, return an array of entities each with an additional `locale` key. */
   locales?: Array<string>
   params?: { [key: string]: unknown }
+  schema: any
 }
 
 export const fetchEntity = async (query: CollectionOptions, context) => {
@@ -62,11 +63,15 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
             locale,
           },
         })
-        return formatEntity({
-          data: localizationResponse,
-          locale,
-          gatsbyNodeType: query.type,
-        })
+        return formatEntity(
+          {
+            data: localizationResponse,
+            locale,
+            gatsbyNodeType: query.type,
+            schema: query.schema,
+          },
+          context
+        )
       })
 
       // Run queries in parallel
@@ -77,10 +82,14 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
       // Fetch default entity based on request options
       const { data } = await axiosInstance(options)
       return [
-        formatEntity({
-          data,
-          gatsbyNodeType: query.type,
-        }),
+        formatEntity(
+          {
+            data,
+            gatsbyNodeType: query.type,
+            schema: query.schema,
+          },
+          context
+        ),
       ]
     }
   } catch (error) {
@@ -157,15 +166,20 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
         })
         const results = await Promise.all(fetchPagesPromises)
 
-        return [...data, ...flattenDeep(results)].map((entry) =>
-          formatEntity({
-            data: entry,
-            gatsbyNodeType: query.type,
-            locale,
-          })
-        )
+        return [...data, ...flattenDeep(results)]
+          .map((entry) =>
+            formatEntity(
+              {
+                data: entry,
+                gatsbyNodeType: query.type,
+                locale,
+                schema: query.schema,
+              },
+              context
+            )
+          )
+          .filter((entity): any => !isEmpty(entity))
       })
-
 
       // Run queries in parallel
       const localizationsData = await Promise.all(localizationsPromises)
@@ -195,12 +209,18 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
 
       const results = await Promise.all(fetchPagesPromises)
 
-      const cleanedData = [...data, ...flattenDeep(results)].map((entry) =>
-        formatEntity({
-          data: entry,
-          gatsbyNodeType: query.type,
-        })
-      )
+      const cleanedData = [...data, ...flattenDeep(results)]
+        .map((entry) =>
+          formatEntity(
+            {
+              data: entry,
+              gatsbyNodeType: query.type,
+              schema: query.schema,
+            },
+            context
+          )
+        )
+        .filter((entity): any => !isEmpty(entity))
 
       return cleanedData
     }
@@ -208,5 +228,4 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
     reporter.panic(`Failed to fetch data from Payload ${options.url}`, error)
     return []
   }
-};
-
+}

@@ -19,7 +19,7 @@ Collections/Globals may also be defined as an object for additional control such
 
 If locales is defined, your Gatbsy nodes will include a `locale` key.
 
-Example options:
+Simple config:
 
 ```ts
 {
@@ -29,13 +29,48 @@ Example options:
     collectionTypes: [
       `events`,
       `landing-pages`,
-      { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
     ],
     globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
     fallbackLocale: `en`,
   },
 },
 ```
+
+More options:
+
+```ts
+import Joi from "joi"
+
+{
+  resolve: `gatsby-source-payload-cms`,
+  options: {
+    endpoint: `https://yourapp.payload.app/api/`,
+    collectionTypes: [
+      `events`,
+      `landing-pages`,
+      { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
+      {
+        slug: `testimonials`,
+        schema: Joi.object({
+          id: Joi.string(),
+          name: Joi.string(),
+          locales: Joi.array(),
+          jobTitle: Joi.string(),
+          quote: Joi.any(),
+          createdAt: Joi.string(),
+          updatedAt: Joi.string(),
+          companyName: Joi.string(),
+          logo: Joi.object(),
+        }),
+      },
+    ],
+    globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
+    fallbackLocale: `en`,
+  },
+},
+```
+
+- Use `schema` to define a schema that entities must validate against in order to be included. For Payload CMS, this may be useful if relationships are not available (either because the related entity has been deleted or the depth parameter is not sufficient) in which case the value may be an id string rather than an object.
 
 ## Development
 
