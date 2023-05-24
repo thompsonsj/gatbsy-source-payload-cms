@@ -22,9 +22,29 @@ export const parsePayloadResponse = (props: { [key: string]: any }) => {
       parsedProps[value] = JSON.stringify(props[value])
     }
 
-    // support nested rich text in blocks
+    /**
+     * Serilaize images
+     *
+     * Although Payload CMS images have a common schema to
+     * some extent, the sizes array will have different keys
+     * depending on the different image transformations applied.
+     *
+     * TODO create asset nodes and investigate Gatsby's CDN feature
+     */
+    if (payloadFieldType(props[value]) === `upload`) {
+      parsedProps[value] = JSON.stringify(props[value])
+    }
+
+    /**
+     * Serilaize block layouts
+     *
+     * There is no schema to interpret - it is not useful to
+     * query this object in GraphQL. Serialize it to a string
+     * so that it can be converted to JSON when needed in
+     * applications.
+     */
     if (payloadFieldType(props[value]) === `blocks`) {
-      parsedProps[value] = props[value].map((block: any) => parsePayloadResponse(block))
+      parsedProps[value] = JSON.stringify(props[value])
     }
 
     // support array
