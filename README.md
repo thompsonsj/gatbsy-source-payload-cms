@@ -1,6 +1,27 @@
-# creating-source-plugin-tutorial
+# gatsby-source-payload-cms
 
-Companion project for the "Creating a Source Plugin" Gatsby tutorial.
+Gatsby source plugin for Payload CMS.
+
+## Development
+
+Use two terminals.
+
+- `yarn develop:site` runs a local test Gatsby installation to test and verify sourced data.
+- `yarn develop:plugin` compiles the plugin from TypeScript as you work.
+
+## Engineering
+
+Developed based on:
+
+- https://www.gatsbyjs.com/docs/tutorial/creating-a-source-plugin/
+- https://github.com/gatsbyjs/creating-source-plugin-tutorial.git
+- https://github.com/gatsby-uc/plugins/tree/main/packages/gatsby-source-strapi
+
+## Points to note
+
+- `gatsbyNodeType` is a reserved key for API responses. If you have a Payload field with this name, it will be overwritten.
+
+# creating-source-plugin-tutorial
 
 ## Prerequisites
 

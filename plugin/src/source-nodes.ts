@@ -1,11 +1,12 @@
 import type { GatsbyNode, SourceNodesArgs, NodeInput } from "gatsby"
 import type { IRemoteImageNodeInput } from "gatsby-plugin-utils"
-import type { IAuthorInput, IPostInput, IPluginOptionsInternal, IPostImageInput, NodeBuilderInput } from "./types"
+import type { IAuthorInput, IPluginOptionsInternal, NodeBuilderInput } from "./types"
 import { CACHE_KEYS, ERROR_CODES, NODE_TYPES } from "./constants"
 import { createAxiosInstance } from "./axios-instance"
 import { fetchEntity } from "./fetch"
 import { fetchGraphQL, isString } from "./utils"
 import type { CollectionOptions } from "./fetch"
+import { upperFirst } from "lodash"
 
 let isFirstSource = true
 
@@ -102,22 +103,26 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
     if (isString(globalType)) {
       return {
         endpoint: new URL(`globals/${globalType}`, endpoint).href,
+        type: globalType,
       }
     }
     return {
       endpoint: new URL(`globals/${globalType.slug}`, endpoint).href,
       ...globalType,
+      type: globalType.slug,
     }
   })
   const normalizedCollectionTypes: Array<CollectionOptions> = collectionTypes.map((collectionType) => {
     if (isString(collectionType)) {
       return {
         endpoint: new URL(`${collectionType}`, endpoint).href,
+        type: collectionType,
       }
     }
     return {
       endpoint: new URL(`${collectionType.slug}`, endpoint).href,
       ...collectionType,
+      type: collectionType.slug,
     }
   })
 
@@ -126,7 +131,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
 
   const globalResults = await Promise.all(normalizedGlobalTypes.map((type) => fetchEntity(type, context)))
 
-  console.log(await globalResults)
+  //console.log(await globalResults)
 
   /**
    * Gatsby's cache API uses LMDB to store data inside the .cache/caches folder.
@@ -145,11 +150,22 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   //sourcingTimer.setStatus(`Processing ${posts.length} posts and ${authors.length} authors`)
 
   /**
+   * Set a default prefix
+   */
+  const prefix = pluginOptions.nodePrefix || `Payload`
+
+  /**
    * Iterate over the data and create nodes
    */
-  for (const post of globalResults) {
-    nodeBuilder({ gatsbyApi, input: { type: NODE_TYPES.Post, data: post } })
-  }
+
+ globalResults.map(result => {
+    
+    result.map(global => {
+      console.log(`building global ${global.gatsbyNodeType}`)
+      nodeBuilder({ gatsbyApi, input: { type: `${prefix}${upperFirst(global.gatsbyNodeType)}`, data: global } })
+    })
+  
+})
 
   /*for (const author of authors) {
     nodeBuilder({ gatsbyApi, input: { type: NODE_TYPES.Author, data: author } })
@@ -160,14 +176,19 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
 
 interface INodeBuilderArgs {
   gatsbyApi: SourceNodesArgs
-  // This uses the "Discriminated Unions" pattern
-  // https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions
-  input: NodeBuilderInput
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  input: {
+    type: string
+    data: { [key: string]: any }
+  }
 }
 
 export function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
-  const id = gatsbyApi.createNodeId(`${input.type}-${input.data.id}`)
-
+  const idFragments = [input.type, input.data.id]
+  if (input.data.locale) {
+    idFragments.push(input.data.locale)
+  }
+  const id = gatsbyApi.createNodeId(idFragments.join(`-`))
   const extraData: Record<string, unknown> = {}
 
   if (input.type === `Post`) {
@@ -190,7 +211,7 @@ export function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
     parent: null,
     children: [],
     internal: {
-      type: input.type,
+      type: input.type as string,
       /**
        * The content digest is a hash of the entire node.
        * Gatsby uses this internally to determine if the node needs to be updated.

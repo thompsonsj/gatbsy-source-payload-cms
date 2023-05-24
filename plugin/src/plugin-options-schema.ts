@@ -25,6 +25,7 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
       )
     ),
     // Define the global slugs to fetch. e.g. [`menu`]
+    // Use an object instead of a string to define locales. e.g. [{slug: `menu`, locales: [`en`, `fr_FR`]}]
     globalTypes: Joi.array().items(
       Joi.alternatives(
         Joi.string(),
@@ -40,5 +41,7 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     // Optional. Throttle parallel requests.
     maxParallelRequests: Joi.number(),
     fallbackLocale: Joi.string(),
+    // Optional. Add a prefix to Gatsby nodes. Default: Payload.
+    nodePrefix: Joi.string(),
   })
 }
