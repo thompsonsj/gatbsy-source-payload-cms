@@ -34,6 +34,10 @@ const config: GatsbyConfig = {
         ],
         globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
         fallbackLocale: `en`,
+        localeMap: {
+          en: `en`,
+          fr_FR: `fr`,
+        },
       } satisfies IPluginOptions,
     },
     `gatsby-plugin-image`,

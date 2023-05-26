@@ -1,3 +1,9 @@
+export const NODE_TYPES = {
+  Post: `Post`,
+  Author: `Author`,
+  Asset: `Asset`,
+} as const
+
 export const CACHE_KEYS = {
   Timestamp: `updatedAt`,
 } as const
