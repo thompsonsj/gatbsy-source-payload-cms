@@ -1,5 +1,5 @@
 import { payloadFieldType } from "./payload-field-type"
-import { isEmpty, isPlainObject } from "lodash"
+import { isFunction, isPlainObject } from "lodash"
 
 interface IFormatEntry {
   data: { [key: string]: unknown }
@@ -66,13 +66,6 @@ export const parsePayloadResponse = (props: { [key: string]: any }) => {
 }
 
 export const formatEntity = ({ data, locale, gatsbyNodeType, schema }: IFormatEntry, context?: any) => {
-  // console.log(`Schema:`, schema)
-  // if (isPlainObject(context.pluginOptions.localeMap) && !isEmpty(context.pluginOptions.localeMap)) {
-  //
-  // }
-  const localeMap = context.pluginOptions.localeMap
-  const mappedLocale = isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale
-  console.log(locale, mappedLocale)
   if (schema) {
     const { error } = schema.validate(data)
     if (error) {
@@ -80,9 +73,18 @@ export const formatEntity = ({ data, locale, gatsbyNodeType, schema }: IFormatEn
       return null
     }
   }
-  return {
+  const res = {
     ...parsePayloadResponse(data),
     gatsbyNodeType,
-    ...(locale && { locale: mappedLocale }),
+    ...(locale && { locale: locale }),
   }
+  const transformedRes: { [key: string]: any } = {}
+  Object.keys(res).forEach((value) => {
+    if (isFunction(context.pluginOptions.nodeTransform[value])) {
+      transformedRes[value] = context.pluginOptions.nodeTransform[value](res[value])
+    } else {
+      transformedRes[value] = res[value]
+    }
+  })
+  return transformedRes
 }

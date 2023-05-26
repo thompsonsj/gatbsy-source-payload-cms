@@ -3,6 +3,12 @@ import type { IPluginOptions } from "plugin"
 import * as dotenv from "dotenv" // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config()
 import Joi from "joi"
+import { isArray, isEmpty, isPlainObject } from "lodash"
+
+const localeMap = {
+  en: `en`,
+  fr_FR: `fr`,
+}
 
 const config: GatsbyConfig = {
   graphqlTypegen: true,
@@ -34,9 +40,13 @@ const config: GatsbyConfig = {
         ],
         globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
         fallbackLocale: `en`,
-        localeMap: {
-          en: `en`,
-          fr_FR: `fr`,
+        nodeTransform: {
+          locale: (locale) => (isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale),
+          locales: (locales) =>
+            isArray(locales) &&
+            locales.map((locale) =>
+              isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale
+            ),
         },
       } satisfies IPluginOptions,
     },

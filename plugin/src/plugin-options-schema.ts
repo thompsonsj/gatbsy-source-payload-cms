@@ -45,6 +45,6 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     // Optional. Add a prefix to Gatsby nodes. Default: Payload.
     nodePrefix: Joi.string(),
     // Optional. Map Payload locales to different strings in the resulting nodes.
-    localeMap: Joi.object(),
+    nodeTransform: Joi.object(),
   })
 }
