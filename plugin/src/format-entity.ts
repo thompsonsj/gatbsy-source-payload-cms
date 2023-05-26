@@ -1,5 +1,5 @@
 import { payloadFieldType } from "./payload-field-type"
-import { isPlainObject } from "lodash"
+import { isEmpty, isPlainObject } from "lodash"
 
 interface IFormatEntry {
   data: { [key: string]: unknown }
@@ -67,6 +67,12 @@ export const parsePayloadResponse = (props: { [key: string]: any }) => {
 
 export const formatEntity = ({ data, locale, gatsbyNodeType, schema }: IFormatEntry, context?: any) => {
   // console.log(`Schema:`, schema)
+  // if (isPlainObject(context.pluginOptions.localeMap) && !isEmpty(context.pluginOptions.localeMap)) {
+  //
+  // }
+  const localeMap = context.pluginOptions.localeMap
+  const mappedLocale = isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale
+  console.log(locale, mappedLocale)
   if (schema) {
     const { error } = schema.validate(data)
     if (error) {
@@ -77,6 +83,6 @@ export const formatEntity = ({ data, locale, gatsbyNodeType, schema }: IFormatEn
   return {
     ...parsePayloadResponse(data),
     gatsbyNodeType,
-    ...(locale && { locale }),
+    ...(locale && { locale: mappedLocale }),
   }
 }
