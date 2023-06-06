@@ -9,6 +9,7 @@ import type { CollectionOptions } from "./fetch"
 import { gatsbyNodeTypeName } from "./utils"
 
 let isFirstSource = true
+const pluginName = `gatsby-source-payload-cms`
 
 // const LAST_FETCHED_KEY = `updatedAt`
 
@@ -28,7 +29,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
    * In the end your users will also have the exact time it took to source the data.
    * @see https://www.gatsbyjs.com/docs/reference/config-files/node-api-helpers/#reporter
    */
-  const sourcingTimer = reporter.activityTimer(`Sourcing from plugin API`)
+  const sourcingTimer = reporter.activityTimer(`Sourcing from ${pluginName} API`)
   sourcingTimer.start()
 
   if (isFirstSource) {
@@ -39,7 +40,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
       /**
        * "owner" is the name of your plugin, the "name" you defined in the package.json
        */
-      if (node.internal.owner !== `plugin`) {
+      if (node.internal.owner !== pluginName) {
         return
       }
 
@@ -79,7 +80,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
    * Try to keep the terminal information concise and informative. You can use the "verbose" method to print more detailed information.
    * You don't need to print out every bit of detail your plugin is doing as otherwise it'll flood the user's terminal.
    */
-  reporter.verbose(`[plugin] Last fetched date: ${lastFetchedDate}`)
+  reporter.verbose(`[${pluginName}] Last fetched date: ${lastFetchedDate}`)
 
   const axiosInstance = createAxiosInstance(pluginOptions)
 
