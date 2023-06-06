@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.3...v0.2.4) (2023-06-06)
+
+
+### Bug Fixes
+
+* **format-entity:** JSON encode all rich text fields ([#26](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/26)) ([31130f8](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/31130f81ee1824907c1d85d0d1375ab74160fd52))
+
 ## [0.2.3](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.2...v0.2.3) (2023-06-06)
 
 
