@@ -4,7 +4,7 @@ import * as dotenv from "dotenv" // see https://github.com/motdotla/dotenv#how-d
 dotenv.config()
 import { isArray, isEmpty, isPlainObject } from "lodash"
 
-import { schemaCustomizations } from "./sdl/schema-customizations"
+import { testimonials } from "./sdl/testimonials"
 
 const localeMap = {
   en: `en`,
@@ -35,9 +35,9 @@ type Asset implements Node & RemoteFile {
 }
 `
 
-const allSchemaCustomizations = `
+const schemaCustomizations = `
 ${originalSchemaCustomizations}
-${schemaCustomizations}
+${testimonials}
 `
 
 const config: GatsbyConfig = {
@@ -65,7 +65,7 @@ const config: GatsbyConfig = {
               isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale
             ),
         },
-        schemaCustomizations: allSchemaCustomizations,
+        schemaCustomizations,
       } satisfies IPluginOptions,
     },
     `gatsby-plugin-image`,
