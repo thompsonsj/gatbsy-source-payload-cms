@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.1...v0.2.2) (2023-06-06)
+
+
+### Bug Fixes
+
+* **format-entity:** restore Payload parsing excluding uploads ([a78aee4](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/a78aee4668b1c8a0a8aebabf265f92b38241f61b))
+
 ## [0.2.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.0...v0.2.1) (2023-06-06)
 
 
