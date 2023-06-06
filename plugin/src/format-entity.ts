@@ -1,5 +1,5 @@
 import { payloadFieldType } from "./payload-field-type"
-import { isFunction } from "lodash"
+import { isFunction, isPlainObject } from "lodash"
 
 interface IFormatEntry {
   data: { [key: string]: unknown }
@@ -37,6 +37,14 @@ export const parsePayloadResponse = (props: { [key: string]: any }) => {
     // support array
     else if (payloadFieldType(props[value]) === `array`) {
       parsedProps[value] = props[value].map((block: any) => parsePayloadResponse(block))
+    } else if (isPlainObject(props[value]) && payloadFieldType(props[value]) !== `upload`) {
+      /**
+       * Support group fields
+       *
+       * This needs to be stronger - improve testing and check
+       * for a group field.
+       */
+      parsedProps[value] = parsePayloadResponse(props[value])
     } else {
       parsedProps[value] = props[value]
     }
