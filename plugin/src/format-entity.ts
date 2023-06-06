@@ -23,20 +23,7 @@ export const parsePayloadResponse = (props: { [key: string]: any }) => {
     }
 
     /**
-     * Serilaize images
-     *
-     * Although Payload CMS images have a common schema to
-     * some extent, the sizes array will have different keys
-     * depending on the different image transformations applied.
-     *
-     * TODO create asset nodes and investigate Gatsby's CDN feature
-     */
-    if (payloadFieldType(props[value]) === `upload`) {
-      parsedProps[value] = JSON.stringify(props[value])
-    }
-
-    /**
-     * Serilaize block layouts
+     * Serialize block layouts
      *
      * There is no schema to interpret - it is not useful to
      * query this object in GraphQL. Serialize it to a string
