@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.0...v0.2.1) (2023-06-06)
+
+
+### Bug Fixes
+
+* **source-nodes:** touch node logic ([#19](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/19)) ([d211d9d](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/d211d9dd534314868dcc62c609c1805dd3d92b69))
+
 ## 0.2.0 (2023-06-06)
 
 
