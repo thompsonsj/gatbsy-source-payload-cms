@@ -1,7 +1,7 @@
 {
   "name": "gatsby-source-payload-cms",
   "description": "Source data from Payload CMS",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "./dist/gatsby-node.js",
   "files": [
