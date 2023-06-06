@@ -40,6 +40,35 @@ ${originalSchemaCustomizations}
 ${schemaCustomizations}
 `
 
+const payloadLocaleMap = {
+  en: `en`,
+  da_DK: `da`,
+  de_DE: `de`,
+  en_GB: `gb`,
+  en_US: `us`,
+  es_ES: `es`,
+  et_EE: `ee`,
+  fi_FI: `fi`,
+  fr_FR: `fr`,
+  it_IT: `it`,
+  le_LT: `lt`,
+  lv_LV: `lv`,
+  nl_NL: `nl`,
+  no_NO: `no`,
+  pl_PL: `pl`,
+  pt_PT: `pt`,
+  sv_SE: `sv`,
+}
+
+const globalParams = {
+  params: {
+    [`where[_status][equals]`]: `published`,
+    depth: 10,
+  },
+}
+
+const payloadLocales = Object.keys(payloadLocaleMap)
+
 const config: GatsbyConfig = {
   graphqlTypegen: true,
   plugins: [
@@ -52,11 +81,24 @@ const config: GatsbyConfig = {
         collectionTypes: [
           `events`,
           `landing-pages`,
-          { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
+          {
+            slug: `policies`,
+            locales: payloadLocales,
+            params: { [`where[_status][equals]`]: `published` },
+          },
           `testimonials`,
+          { slug: `localized-testimonials`, locales: payloadLocales },
           `logos`,
         ],
-        globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
+        globalTypes: [
+          { slug: `customers`, locales: payloadLocales, ...globalParams },
+          { slug: `enterprise`, locales: payloadLocales, ...globalParams },
+          { slug: `careers`, locales: payloadLocales, ...globalParams },
+          { slug: `statistics`, locales: payloadLocales, ...globalParams },
+          { slug: `small-midsize`, locales: payloadLocales, ...globalParams },
+          { slug: `pricing`, locales: payloadLocales, ...globalParams },
+          { slug: `ats`, locales: payloadLocales, ...globalParams },
+        ],
         fallbackLocale: `en`,
         nodeTransform: {
           locale: (locale) => (isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale),
