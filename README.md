@@ -39,7 +39,29 @@ Simple config:
 More options:
 
 ```ts
-import Joi from "joi"
+const schemaCustomizations = `
+type Post implements Node {
+  id: ID!
+  _id: Int!
+  slug: String!
+  title: String!
+  author: Author @link(by: "name")
+  image: Asset @link
+}
+
+type Author implements Node {
+  id: ID!
+  _id: Int!
+  name: String!
+}
+
+type Asset implements Node & RemoteFile {
+  url: String!
+  alt: String!
+  width: Int!
+  height: Int!
+}
+`
 
 {
   resolve: `gatsby-source-payload-cms`,
@@ -49,28 +71,20 @@ import Joi from "joi"
       `events`,
       `landing-pages`,
       { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
-      {
-        slug: `testimonials`,
-        schema: Joi.object({
-          id: Joi.string(),
-          name: Joi.string(),
-          locales: Joi.array(),
-          jobTitle: Joi.string(),
-          quote: Joi.any(),
-          createdAt: Joi.string(),
-          updatedAt: Joi.string(),
-          companyName: Joi.string(),
-          logo: Joi.object(),
-        }),
-      },
     ],
     globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
     fallbackLocale: `en`,
   },
+  /**
+   * Create schema customizations
+   *
+   * Optional. Passed to the `createTypes` action in createSchemaCustomization.
+   *
+   * @see https://www.gatsbyjs.com/docs/reference/graphql-data-layer/schema-customization
+   */
+  schemaCustomizations,
 },
 ```
-
-- Use `schema` to define a schema that entities must validate against in order to be included. For Payload CMS, this may be useful if relationships are not available (either because the related entity has been deleted or the depth parameter is not sufficient) in which case the value may be an id string rather than an object.
 
 ## Development
 

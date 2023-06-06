@@ -6,7 +6,7 @@ import { createAxiosInstance } from "./axios-instance"
 import { fetchEntity, fetchEntities } from "./fetch"
 import { isString } from "./utils"
 import type { CollectionOptions } from "./fetch"
-import { camelCase, upperFirst } from "lodash"
+import { gatsbyNodeTypeName } from "./utils"
 
 let isFirstSource = true
 
@@ -153,7 +153,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   /**
    * Set a default prefix
    */
-  const prefix = pluginOptions.nodePrefix || `Payload`
+  const prefix = pluginOptions.nodePrefix
 
   /**
    * Iterate over the data and create nodes
@@ -162,7 +162,13 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
     for (const collection of result) {
       nodeBuilder({
         gatsbyApi,
-        input: { type: `${prefix}${upperFirst(camelCase(collection.gatsbyNodeType))}`, data: collection },
+        input: {
+          type: gatsbyNodeTypeName({
+            payloadSlug: collection.gatsbyNodeType,
+            ...(isString(prefix) && { prefix: prefix as string }),
+          }),
+          data: collection,
+        },
       })
     }
   }
@@ -170,7 +176,13 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
     for (const global of result) {
       nodeBuilder({
         gatsbyApi,
-        input: { type: `${prefix}${upperFirst(camelCase(global.gatsbyNodeType))}`, data: global },
+        input: {
+          type: gatsbyNodeTypeName({
+            payloadSlug: global.gatsbyNodeType,
+            ...(isString(prefix) && { prefix: prefix as string }),
+          }),
+          data: global,
+        },
       })
     }
   }

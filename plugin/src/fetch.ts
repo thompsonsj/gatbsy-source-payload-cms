@@ -18,7 +18,6 @@ export type CollectionOptions = {
   /** If locales are set, return an array of entities each with an additional `locale` key. */
   locales?: Array<string>
   params?: { [key: string]: unknown }
-  schema: any
 }
 
 export const fetchEntity = async (query: CollectionOptions, context) => {
@@ -68,7 +67,6 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
             data: localizationResponse,
             locale,
             gatsbyNodeType: query.type,
-            schema: query.schema,
           },
           context
         )
@@ -86,7 +84,6 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
           {
             data,
             gatsbyNodeType: query.type,
-            schema: query.schema,
           },
           context
         ),
@@ -173,7 +170,6 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
                 data: entry,
                 gatsbyNodeType: query.type,
                 locale,
-                schema: query.schema,
               },
               context
             )
@@ -215,7 +211,6 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
             {
               data: entry,
               gatsbyNodeType: query.type,
-              schema: query.schema,
             },
             context
           )

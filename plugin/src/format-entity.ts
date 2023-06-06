@@ -5,7 +5,6 @@ interface IFormatEntry {
   data: { [key: string]: unknown }
   locale?: string
   gatsbyNodeType: string
-  schema?: any
 }
 
 export const parsePayloadResponse = (props: { [key: string]: any }) => {
@@ -65,14 +64,7 @@ export const parsePayloadResponse = (props: { [key: string]: any }) => {
   return parsedProps
 }
 
-export const formatEntity = ({ data, locale, gatsbyNodeType, schema }: IFormatEntry, context?: any) => {
-  if (schema) {
-    const { error } = schema.validate(data)
-    if (error) {
-      context.reporter.warn(`Schema for ${gatsbyNodeType} entity failed validation. Excluding ${data.id}.`)
-      return null
-    }
-  }
+export const formatEntity = ({ data, locale, gatsbyNodeType }: IFormatEntry, context?: any) => {
   const res = {
     ...parsePayloadResponse(data),
     gatsbyNodeType,
