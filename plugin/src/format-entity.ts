@@ -1,4 +1,5 @@
-import { isFunction } from "lodash"
+import { payloadFieldType } from "./payload-field-type"
+import { isFunction, isPlainObject } from "lodash"
 
 interface IFormatEntry {
   data: { [key: string]: unknown }
@@ -6,9 +7,53 @@ interface IFormatEntry {
   gatsbyNodeType: string
 }
 
+export const parsePayloadResponse = (props: { [key: string]: any }) => {
+  const parsedProps: { [key: string]: any } = {}
+  Object.keys(props).forEach((value) => {
+    /**
+     * Serilaize Slate JSON
+     *
+     * There is no schema to interpret - it is not useful to
+     * query this object in GraphQL. Serialize it to a string
+     * so that it can be converted to JSON when needed in
+     * applications.
+     */
+    if (payloadFieldType(props[value]) === `richText`) {
+      parsedProps[value] = JSON.stringify(props[value])
+    }
+
+    /**
+     * Serialize block layouts
+     *
+     * There is no schema to interpret - it is not useful to
+     * query this object in GraphQL. Serialize it to a string
+     * so that it can be converted to JSON when needed in
+     * applications.
+     */
+    if (payloadFieldType(props[value]) === `blocks`) {
+      parsedProps[value] = JSON.stringify(props[value])
+    }
+
+    // support array
+    if (payloadFieldType(props[value]) === `array`) {
+      parsedProps[value] = props[value].map((block: any) => parsePayloadResponse(block))
+    }
+
+    if (payloadFieldType(props[value]) === `other`) {
+      // support groups
+      if (isPlainObject(props[value])) {
+        parsedProps[value] = parsePayloadResponse(props[value])
+      } else {
+        parsedProps[value] = props[value]
+      }
+    }
+  })
+  return parsedProps
+}
+
 export const formatEntity = ({ data, locale, gatsbyNodeType }: IFormatEntry, context?: any) => {
   const res = {
-    ...data,
+    ...parsePayloadResponse(data),
     gatsbyNodeType,
     ...(locale && { locale: locale }),
   }
