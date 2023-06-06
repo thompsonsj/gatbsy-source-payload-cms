@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.2...v0.2.3) (2023-06-06)
+
+
+### Bug Fixes
+
+* **format-entity:** payload response parsing ([#23](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/23)) ([1e99a88](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/1e99a88c492782e5caf2d4669b826a54baddeb41))
+
 ## [0.2.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.1...v0.2.2) (2023-06-06)
 
 
