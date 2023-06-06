@@ -22,6 +22,7 @@ export type NodeBuilderInput =
 
 interface IPluginOptionsKeys {
   endpoint: string
+  schemaCustomizations?: string
 }
 
 /**

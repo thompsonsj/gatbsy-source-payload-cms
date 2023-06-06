@@ -21,7 +21,6 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
           slug: Joi.string(),
           locales: Joi.array().items(Joi.string()),
           params: Joi.object(),
-          schema: Joi.any(),
         })
       )
     ),
@@ -46,5 +45,13 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     nodePrefix: Joi.string(),
     // Optional. Map Payload locales to different strings in the resulting nodes.
     nodeTransform: Joi.object(),
+    /**
+     * Create schema customizations
+     *
+     * Optional. Passed to the `createTypes` action in createSchemaCustomization.
+     *
+     * @see https://www.gatsbyjs.com/docs/reference/graphql-data-layer/schema-customization
+     */
+    schemaCustomizations: Joi.string(),
   })
 }

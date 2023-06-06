@@ -1,5 +1,5 @@
 import fetch, { HeadersInit } from "node-fetch"
-import { isEmpty } from "lodash"
+import { camelCase, isEmpty, upperFirst } from "lodash"
 
 const headers = {
   "Content-Type": `application/json`,
@@ -31,3 +31,6 @@ export const fetchDataMessage = (url: string, serializedParams?: string): string
   }
   return message.join(` `)
 }
+
+export const gatsbyNodeTypeName = ({ payloadSlug, prefix = `Payload` }: { payloadSlug: string; prefix?: string }) =>
+  `${prefix}${upperFirst(camelCase(payloadSlug))}`
