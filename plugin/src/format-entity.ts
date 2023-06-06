@@ -1,5 +1,5 @@
 import { payloadFieldType } from "./payload-field-type"
-import { isFunction, isPlainObject } from "lodash"
+import { isFunction } from "lodash"
 
 interface IFormatEntry {
   data: { [key: string]: unknown }
