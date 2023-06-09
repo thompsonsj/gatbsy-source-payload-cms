@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.4...v0.2.5) (2023-06-09)
+
+
+### Bug Fixes
+
+* **fetch:** localized results ([#28](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/28)) ([4bb1e46](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/4bb1e46b391d322f0d45aca5449057bc2940442f))
+
 ## [0.2.4](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.3...v0.2.4) (2023-06-06)
 
 
