@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.5...v0.2.6) (2023-06-09)
+
+
+### Bug Fixes
+
+* **format-entity:** reapply [#18](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/18) ([#30](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/30)) ([c167463](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/c16746384d3bdd6e195be440f9c8f9990f2425a8))
+
 ## [0.2.5](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.4...v0.2.5) (2023-06-09)
 
 
