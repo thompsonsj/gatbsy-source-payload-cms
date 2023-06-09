@@ -129,14 +129,19 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
     const page = Number.parseInt(response.page || 1, 10)
     const pageCount = Number.parseInt(response.totalPages || 1, 10)
 
-    const pagesToGet = Array.from({
+    let pagesToGet = Array.from({
       length: pageCount - page,
     }).map((_, index) => index + page + 1)
 
     // Handle internationalization
-    const fallbackLocale = context.pluginOptions?.fallbackLocale
+    // If locales are active, always fetch page 1 - we need to rerun the query to get localizations.
     const locales = query.locales || []
-    if (locales.length > 0 && pagesToGet.length > 0) {
+    if (locales.length > 0) {
+      pagesToGet = [1, ...pagesToGet]
+    }
+
+    const fallbackLocale = context.pluginOptions?.fallbackLocale
+    if (locales.length > 0) {
       const localizationsPromises = locales.map(async (locale) => {
         const fetchPagesPromises = pagesToGet.map((page) => {
           return (async () => {
@@ -180,44 +185,6 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
       const localizationsData = await Promise.all(localizationsPromises)
 
       return flattenDeep(localizationsData)
-    } else if (locales.length > 0) {
-      const localizationsPromises = locales.map(async (locale) => {
-        return (async () => {
-          const fetchOptions = {
-            ...options,
-            params: {
-              ...options.params,
-              page,
-              fallbackLocale,
-              locale,
-            },
-          }
-
-          reporter.info(fetchDataMessage(fetchOptions.url, options.paramsSerializer.serialize(fetchOptions.params)))
-
-          try {
-            const data = await axiosInstance(fetchOptions)
-            return data.data.docs
-              .map((entry) =>
-                formatEntity(
-                  {
-                    data: entry,
-                    gatsbyNodeType: query.type,
-                    locale,
-                  },
-                  context
-                )
-              )
-              .filter((entity): any => !isEmpty(entity))
-          } catch (error) {
-            reporter.panic(`Failed to fetch data from Payload ${fetchOptions.url}`, error)
-          }
-        })()
-      })
-
-      const results = await Promise.all(localizationsPromises)
-
-      return flattenDeep(results)
     } else {
       const fetchPagesPromises = pagesToGet.map((page) => {
         return (async () => {
