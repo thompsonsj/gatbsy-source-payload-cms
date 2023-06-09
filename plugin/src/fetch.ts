@@ -129,14 +129,18 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
     const page = Number.parseInt(response.page || 1, 10)
     const pageCount = Number.parseInt(response.totalPages || 1, 10)
 
-    const pagesToGet = Array.from({
+    let pagesToGet = Array.from({
       length: pageCount - page,
     }).map((_, index) => index + page + 1)
 
     // Handle internationalization
-    const fallbackLocale = context.pluginOptions?.fallbackLocale
+    // If locales are active, always fetch page 1 - we need to rerun the query to get localizations.
     const locales = query.locales || []
+    if (locales.length > 0) {
+      pagesToGet = [1, ...pagesToGet]
+    }
 
+    const fallbackLocale = context.pluginOptions?.fallbackLocale
     if (locales.length > 0) {
       const localizationsPromises = locales.map(async (locale) => {
         const fetchPagesPromises = pagesToGet.map((page) => {
@@ -151,7 +155,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
               },
             }
 
-            reporter.info(fetchDataMessage(options.url, options.paramsSerializer.serialize(options.params)))
+            reporter.info(fetchDataMessage(fetchOptions.url, options.paramsSerializer.serialize(fetchOptions.params)))
 
             try {
               const data = await axiosInstance(fetchOptions)
