@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.6...v0.3.0) (2023-06-13)
+
+
+### Features
+
+* **plugin-options-schema:** hard limit ([#32](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/32)) ([b1e4265](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/b1e42658c3addc4e4f25059a252cbd8d2e01c7bf))
+
 ## [0.2.6](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.5...v0.2.6) (2023-06-09)
 
 
