@@ -60,10 +60,19 @@ const payloadLocaleMap = {
   sv_SE: `sv`,
 }
 
+const API_CALL_LIMIT = `true`
+
+const commonParams = {
+  params: {
+    depth: 10,
+  },
+  ...(API_CALL_LIMIT === `true` && { limit: 5 }),
+}
+
 const globalParams = {
   params: {
+    ...commonParams.params,
     [`where[_status][equals]`]: `published`,
-    depth: 10,
   },
 }
 
@@ -79,16 +88,28 @@ const config: GatsbyConfig = {
       options: {
         endpoint: process.env.PAYLOAD_BASE_URL,
         collectionTypes: [
-          `events`,
-          `landing-pages`,
+          {
+            slug: `events`,
+            ...commonParams,
+          },
+          {
+            slug: `landing-pages`,
+            ...commonParams,
+          },
           {
             slug: `policies`,
             locales: payloadLocales,
-            params: { [`where[_status][equals]`]: `published` },
+            ...globalParams,
           },
-          `testimonials`,
-          { slug: `localized-testimonials`, locales: payloadLocales },
-          `logos`,
+          {
+            slug: `testimonials`,
+            ...commonParams,
+          },
+          { slug: `localized-testimonials`, locales: payloadLocales, ...commonParams },
+          {
+            slug: `logos`,
+            ...commonParams,
+          },
         ],
         globalTypes: [
           { slug: `customers`, locales: payloadLocales, ...globalParams },

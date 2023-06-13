@@ -21,6 +21,8 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
           slug: Joi.string(),
           locales: Joi.array().items(Joi.string()),
           params: Joi.object(),
+          /** Override limit in query params and disable paginated query */
+          limit: Joi.number(),
         })
       )
     ),
@@ -33,6 +35,8 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
           slug: Joi.string(),
           locales: Joi.array().items(Joi.string()),
           params: Joi.object(),
+          /** Override limit in query params and disable paginated query */
+          limit: Joi.number(),
         })
       )
     ),
