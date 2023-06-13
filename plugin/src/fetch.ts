@@ -7,7 +7,7 @@
  * * If locales are defined for a global/collection, return all localized entities and add a `locale` key.
  */
 import qs from "qs"
-import { flattenDeep, isEmpty } from "lodash"
+import { flattenDeep, isEmpty, isNumber } from "lodash"
 import { formatEntity } from "./format-entity"
 import { fetchDataMessage } from "./utils"
 
@@ -18,6 +18,7 @@ export type CollectionOptions = {
   /** If locales are set, return an array of entities each with an additional `locale` key. */
   locales?: Array<string>
   params?: { [key: string]: unknown }
+  limit?: number
 }
 
 export const fetchEntity = async (query: CollectionOptions, context) => {
@@ -29,7 +30,10 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
   const options = {
     method: `GET`,
     url: query.endpoint,
-    params: params,
+    params: {
+      ...params,
+      ...(isNumber(query.limit) && { limit: query.limit }),
+    },
     // Source: https://github.com/axios/axios/issues/5058#issuecomment-1379970592
     paramsSerializer: {
       serialize: (parameters) => qs.stringify(parameters, { encodeValuesOnly: true }),
@@ -102,11 +106,16 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
 
   const params = query.params || {}
 
+  const skipPagination = isNumber(query.limit)
+
   /** @type AxiosRequestConfig */
   const options = {
     method: `GET`,
     url: query.endpoint,
-    params: params,
+    params: {
+      ...params,
+      ...(skipPagination && { limit: query.limit }),
+    },
     paramsSerializer: {
       serialize: (parameters) => qs.stringify(parameters, { encodeValuesOnly: true }),
     },
@@ -138,6 +147,9 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
     const locales = query.locales || []
     if (locales.length > 0) {
       pagesToGet = [1, ...pagesToGet]
+    }
+    if (skipPagination) {
+      pagesToGet = []
     }
 
     const fallbackLocale = context.pluginOptions?.fallbackLocale
