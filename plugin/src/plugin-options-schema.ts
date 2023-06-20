@@ -23,6 +23,7 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
           params: Joi.object(),
           /** Override limit in query params and disable paginated query */
           limit: Joi.number(),
+          /** Create image CDN nodes for upload collections. Set as `original` to use original image, or use a Payload imageSize name. See https://payloadcms.com/docs/upload/overview. */
           imageCdn: Joi.string(),
         })
       )

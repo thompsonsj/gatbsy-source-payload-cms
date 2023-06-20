@@ -112,9 +112,7 @@ const config: GatsbyConfig = {
           },
           {
             slug: `marketing-site-images`,
-            imageCdn: {
-              size: `desktop`,
-            },
+            imageCdn: `desktop`,
           },
         ],
         globalTypes: [
