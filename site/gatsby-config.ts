@@ -110,6 +110,12 @@ const config: GatsbyConfig = {
             slug: `logos`,
             ...commonParams,
           },
+          {
+            slug: `marketing-site-images`,
+            imageCdn: {
+              size: `desktop`,
+            },
+          },
         ],
         globalTypes: [
           { slug: `customers`, locales: payloadLocales, ...globalParams },

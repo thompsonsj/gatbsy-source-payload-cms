@@ -19,6 +19,7 @@ export type CollectionOptions = {
   locales?: Array<string>
   params?: { [key: string]: unknown }
   limit?: number
+  imageCdn?: string
 }
 
 export const fetchEntity = async (query: CollectionOptions, context) => {
@@ -71,6 +72,9 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
             data: localizationResponse,
             locale,
             gatsbyNodeType: query.type,
+            ...(query.imageCdn && {
+              gatsbyImageCdn: query.imageCdn,
+            }),
           },
           context
         )
@@ -88,6 +92,9 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
           {
             data,
             gatsbyNodeType: query.type,
+            ...(query.imageCdn && {
+              gatsbyImageCdn: query.imageCdn,
+            }),
           },
           context
         ),
@@ -186,6 +193,9 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
                 data: entry,
                 gatsbyNodeType: query.type,
                 locale,
+                ...(query.imageCdn && {
+                  gatsbyImageCdn: query.imageCdn,
+                }),
               },
               context
             )
@@ -227,6 +237,9 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
             {
               data: entry,
               gatsbyNodeType: query.type,
+              ...(query.imageCdn && {
+                gatsbyImageCdn: query.imageCdn,
+              }),
             },
             context
           )
