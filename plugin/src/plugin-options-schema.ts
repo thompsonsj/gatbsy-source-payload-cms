@@ -44,6 +44,8 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     accessToken: Joi.string(),
     // Optional. Throttle parallel requests.
     maxParallelRequests: Joi.number(),
+    // Optional. Retry requests using https://www.npmjs.com/package/axios-retry.
+    retries: Joi.number(),
     fallbackLocale: Joi.string(),
     // Optional. Add a prefix to Gatsby nodes. Default: Payload.
     nodePrefix: Joi.string(),

@@ -1,4 +1,5 @@
 import axios from "axios"
+import axiosRetry from "axios-retry"
 
 /**
  * Inspiration from:
@@ -47,6 +48,10 @@ export const createAxiosInstance = (pluginConfig) => {
     baseURL: apiURL,
     headers,
   })
+
+  if (pluginConfig.retries) {
+    axiosRetry(instance, { retries: pluginConfig.retries })
+  }
 
   /** Add throttling interceptors */
   throttlingInterceptors(instance, maxParallelRequests)
