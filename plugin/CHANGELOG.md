@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.4.0...v0.4.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* **plugin:** exponential delay ([#38](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/38)) ([b3e16f5](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/b3e16f5cc38e7cab2fcdd51c352e49e641a52df1))
+
 ## [0.4.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.3.0...v0.4.0) (2023-06-21)
 
 
