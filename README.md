@@ -103,7 +103,7 @@ Developed based on:
 
 ## Points to note
 
-- `gatsbyNodeType` is a reserved key for API responses. If you have a Payload field with this name, it will be overwritten.
+- `gatsbyNodeType` and `gatsbyImageCdn` are reserved keys for API responses. If you have a Payload field with this name, it will be overwritten. Issue noted and this should be removed after the following issue is resolved: https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/34.
 
 # creating-source-plugin-tutorial
 
