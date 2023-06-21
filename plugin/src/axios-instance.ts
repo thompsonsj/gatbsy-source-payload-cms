@@ -50,7 +50,10 @@ export const createAxiosInstance = (pluginConfig) => {
   })
 
   if (pluginConfig.retries) {
-    axiosRetry(instance, { retries: pluginConfig.retries })
+    axiosRetry(instance, {
+      retries: pluginConfig.retries,
+      retryDelay: axiosRetry.exponentialDelay,
+    })
   }
 
   /** Add throttling interceptors */
