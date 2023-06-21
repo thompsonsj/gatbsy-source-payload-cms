@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.3.0...v0.4.0) (2023-06-21)
+
+
+### Features
+
+* **plugin:** add axios retry ([#36](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/36)) ([b17b5cf](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/b17b5cf94193610764e36bc40a33c54ece4e215a))
+
 ## [0.3.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.2.6...v0.3.0) (2023-06-13)
 
 
