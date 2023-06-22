@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fn: extractRelationships returns a dot notation object as expected 1`] = `
+{
+  "candidateExperience.features[0].id": "64877c7af30296075f4a37eb",
+  "candidateExperience.features[1].id": "64877c85f30296075f4a37ec",
+  "candidateExperience.features[2].id": "64877c97f30296075f4a37ed",
+  "candidateExperience.image.id": "6482f6cf4eeb06b7624c88f0",
+  "crowdinArticleDirectory.crowdinCollectionDirectory.id": "64747e3d417838b0af7c6a32",
+  "crowdinArticleDirectory.id": "64877d207ac104cf4d385652",
+  "hereForYou.features[0].id": "64877ce3f30296075f4a37ee",
+  "hereForYou.features[1].id": "64877cebf30296075f4a37ef",
+  "hereForYou.features[2].id": "64877cf3f30296075f4a37f0",
+  "hereForYou.image.id": "64806b0c7d76401e78123639",
+  "hero.image.id": "64877c477ac104cf4d385601",
+  "promo.crowdinArticleDirectory.id": "6474baaf73b854f4d464e38f",
+  "promo.ctas[0].id": "6474a80221baea4f5f169757",
+  "promo.ctas[1].id": "6474a81021baea4f5f169758",
+  "promo.id": "6474a81bef389b66642035ff",
+  "reviews.items[0].id": "64877d03f30296075f4a37f1",
+  "textWithImage.image.id": "64930c130b26002301e4fd62",
+}
+`;
+
+exports[`fn: extractRelationships returns a dot notation object as expected with prefixed keys 1`] = `
+{
+  "collectionName.candidateExperience.features[0].id": "64877c7af30296075f4a37eb",
+  "collectionName.candidateExperience.features[1].id": "64877c85f30296075f4a37ec",
+  "collectionName.candidateExperience.features[2].id": "64877c97f30296075f4a37ed",
+  "collectionName.candidateExperience.image.id": "6482f6cf4eeb06b7624c88f0",
+  "collectionName.crowdinArticleDirectory.crowdinCollectionDirectory.id": "64747e3d417838b0af7c6a32",
+  "collectionName.crowdinArticleDirectory.id": "64877d207ac104cf4d385652",
+  "collectionName.hereForYou.features[0].id": "64877ce3f30296075f4a37ee",
+  "collectionName.hereForYou.features[1].id": "64877cebf30296075f4a37ef",
+  "collectionName.hereForYou.features[2].id": "64877cf3f30296075f4a37f0",
+  "collectionName.hereForYou.image.id": "64806b0c7d76401e78123639",
+  "collectionName.hero.image.id": "64877c477ac104cf4d385601",
+  "collectionName.id": "64877d207ac104cf4d385657",
+  "collectionName.promo.crowdinArticleDirectory.id": "6474baaf73b854f4d464e38f",
+  "collectionName.promo.ctas[0].id": "6474a80221baea4f5f169757",
+  "collectionName.promo.ctas[1].id": "6474a81021baea4f5f169758",
+  "collectionName.promo.id": "6474a81bef389b66642035ff",
+  "collectionName.reviews.items[0].id": "64877d03f30296075f4a37f1",
+  "collectionName.textWithImage.image.id": "64930c130b26002301e4fd62",
+}
+`;
