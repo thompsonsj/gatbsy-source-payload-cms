@@ -6,7 +6,9 @@ import { createAxiosInstance } from "./axios-instance"
 import { fetchEntity, fetchEntities } from "./fetch"
 import { isString } from "./utils"
 import type { CollectionOptions } from "./fetch"
-import { gatsbyNodeTypeName } from "./utils"
+import { gatsbyNodeTypeName, documentRelationships } from "./utils"
+import { createRemoteFileNode } from "gatsby-source-filesystem"
+import { get, pickBy } from "lodash"
 
 let isFirstSource = true
 const pluginName = `gatsby-source-payload-cms`
@@ -21,7 +23,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   const { actions, reporter, cache, getNodes } = gatsbyApi
   const { touchNode } = actions
   const { endpoint } = pluginOptions
-  let { collectionTypes, globalTypes } = pluginOptions
+  let { collectionTypes, globalTypes, uploadTypes } = pluginOptions
 
   /**
    * It's good practice to give your users some feedback on progress and status. Instead of printing individual lines, use the activityTimer API.
@@ -97,6 +99,9 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   if (!Array.isArray(collectionTypes)) {
     collectionTypes = []
   }
+  if (!Array.isArray(uploadTypes)) {
+    uploadTypes = []
+  }
 
   // convert string collectionTypes and globalTypes to object
   const normalizedGlobalTypes: Array<CollectionOptions> = (globalTypes as any).map((globalType) => {
@@ -129,9 +134,25 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
       schema: collectionType.schema,
     }
   })
+  const normalizedUploadTypes: Array<CollectionOptions> = (uploadTypes as any).map((uploadType) => {
+    if (isString(uploadType)) {
+      return {
+        endpoint: new URL(`${uploadType}`, endpoint).href,
+        type: uploadType,
+        schema: null,
+      }
+    }
+    return {
+      endpoint: new URL(`${uploadType.slug}`, endpoint).href,
+      ...uploadType,
+      type: uploadType.slug,
+      schema: uploadType.schema,
+    }
+  })
 
   const collectionResults = await Promise.all(normalizedCollectionTypes.map((type) => fetchEntities(type, context)))
   const globalResults = await Promise.all(normalizedGlobalTypes.map((type) => fetchEntity(type, context)))
+  const uploadResults = await Promise.all(normalizedUploadTypes.map((type) => fetchEntities(type, context)))
 
   //console.log(await globalResults)
 
@@ -157,6 +178,11 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   const prefix = pluginOptions.nodePrefix
 
   /**
+   * Collect relationship ids
+   */
+  let relationshipIds: { [key: string]: string } = {}
+
+  /**
    * Iterate over the data and create nodes
    */
   for (const result of collectionResults) {
@@ -171,6 +197,11 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
           data: collection,
         },
       })
+      // Populate relationshipIds
+      relationshipIds = {
+        ...documentRelationships(collection, [collection.gatsbyNodeType, collection.id].join(`.`)),
+        ...relationshipIds,
+      }
     }
   }
   for (const result of globalResults) {
@@ -185,6 +216,29 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
           data: global,
         },
       })
+      // Populate relationshipIds
+      relationshipIds = {
+        ...documentRelationships(global, global.gatsbyNodeType),
+        ...relationshipIds,
+      }
+    }
+  }
+
+  for (const result of uploadResults) {
+    for (const upload of result) {
+      nodeBuilder({
+        gatsbyApi,
+        input: {
+          type: gatsbyNodeTypeName({
+            payloadSlug: global.gatsbyNodeType,
+            ...(isString(prefix) && { prefix: prefix as string }),
+          }),
+          data: upload,
+        },
+      })
+      if (pluginOptions.localFiles) {
+        createLocalFileNode(context, upload, relationshipIds)
+      }
     }
   }
 
@@ -245,6 +299,35 @@ export function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
    * @see https://www.gatsbyjs.com/docs/reference/config-files/actions/#createNode
    */
   gatsbyApi.actions.createNode(node)
+}
+
+export async function createLocalFileNode(
+  context: SourceNodesArgs,
+  data: any,
+  relationshipIds?: { [key: string]: string }
+) {
+  const { createNode, createNodeField } = context.actions
+  const { cache } = context
+  const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
+
+  const url = encodeURI(`${baseUrl}${data.url}` as string)
+
+  const fileNode = await createRemoteFileNode({
+    url,
+    cache,
+    createNode,
+    createNodeId: () => `upload-${data.id}`,
+  })
+  const relationships: Array<string> = Object.keys(
+    pickBy(relationshipIds, (value) => {
+      return value === data.id
+    })
+  )
+  await createNodeField({
+    node: fileNode,
+    name: `relationships`,
+    value: relationships,
+  })
 }
 
 export function createAssetNode(gatsbyApi: SourceNodesArgs, data: any) {

@@ -40,6 +40,21 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
         })
       )
     ),
+    // Define the upload collections to fetch. e.g. [`images`]
+    // Use an object instead of a string to define locales. e.g. [{slug: `images`, locales: [`en`, `fr_FR`]}]
+    // if `localFiles` is true, local file nods will be created
+    uploadTypes: Joi.array().items(
+      Joi.alternatives(
+        Joi.string(),
+        Joi.object({
+          slug: Joi.string(),
+          locales: Joi.array().items(Joi.string()),
+          params: Joi.object(),
+          /** Override limit in query params and disable paginated query */
+          limit: Joi.number(),
+        })
+      )
+    ),
     // Optional. Access token. Use if your API is protected.
     accessToken: Joi.string(),
     // Optional. Throttle parallel requests.
@@ -59,5 +74,9 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
      * @see https://www.gatsbyjs.com/docs/reference/graphql-data-layer/schema-customization
      */
     schemaCustomizations: Joi.string(),
+    // Optional. Create local file nodes for upload collections.
+    localFiles: Joi.boolean(),
+    /** A base URL for constructing imageUrls. Required for `localFiles`. */
+    baseUrl: Joi.string().when(`localFiles`, { is: true, then: Joi.string().required() }),
   })
 }

@@ -66,7 +66,7 @@ const commonParams = {
   params: {
     depth: 10,
   },
-  ...(API_CALL_LIMIT === `true` && { limit: 5 }),
+  ...(API_CALL_LIMIT === `true` && { limit: 1000 }),
 }
 
 const globalParams = {
@@ -75,6 +75,8 @@ const globalParams = {
     [`where[_status][equals]`]: `published`,
   },
 }
+
+const baseUrl = `https://cms.teamtailor.app/`
 
 const payloadLocales = Object.keys(payloadLocaleMap)
 
@@ -88,6 +90,8 @@ const config: GatsbyConfig = {
       options: {
         endpoint: process.env.PAYLOAD_BASE_URL,
         retries: 3,
+        localFiles: true,
+        baseUrl,
         collectionTypes: [
           {
             slug: `events`,
@@ -120,6 +124,10 @@ const config: GatsbyConfig = {
           { slug: `small-midsize`, locales: payloadLocales, ...globalParams },
           { slug: `pricing`, locales: payloadLocales, ...globalParams },
           { slug: `ats`, locales: payloadLocales, ...globalParams },
+        ],
+        uploadTypes: [
+          { slug: `marketing-site-images`, ...commonParams },
+          { slug: `media`, ...commonParams },
         ],
         fallbackLocale: `en`,
         nodeTransform: {
