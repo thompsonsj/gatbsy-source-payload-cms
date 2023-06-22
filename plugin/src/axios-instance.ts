@@ -48,11 +48,19 @@ export const createAxiosInstance = (pluginConfig) => {
     baseURL: apiURL,
     headers,
   })
-
   if (pluginConfig.retries) {
+    // https://github.com/softonic/axios-retry/issues/87
+    const retryDelay = (retryNumber = 0) => {
+      const seconds = Math.pow(2, retryNumber) * 1000
+      const randomMs = 1000 * Math.random()
+      return seconds + randomMs
+    }
+
     axiosRetry(instance, {
       retries: pluginConfig.retries,
-      retryDelay: axiosRetry.exponentialDelay,
+      retryDelay,
+      // retry on Network Error & 5xx responses
+      retryCondition: axiosRetry.isRetryableError,
     })
   }
 

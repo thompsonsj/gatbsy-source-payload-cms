@@ -87,6 +87,7 @@ const config: GatsbyConfig = {
       // You can pass any serializable options to the plugin
       options: {
         endpoint: process.env.PAYLOAD_BASE_URL,
+        retries: 3,
         collectionTypes: [
           {
             slug: `events`,
