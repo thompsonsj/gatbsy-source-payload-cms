@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.4.2...v0.5.0) (2023-06-22)
+
+
+### Features
+
+* **source-nodes:** create local files from upload collection ([#42](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/42)) ([daf4a13](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/daf4a133443121b4ddc204b6c00a0c0b9b4cb55c))
+
 ## [0.4.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.4.1...v0.4.2) (2023-06-22)
 
 
