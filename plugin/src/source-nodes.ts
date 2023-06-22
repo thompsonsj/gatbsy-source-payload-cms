@@ -6,7 +6,7 @@ import { createAxiosInstance } from "./axios-instance"
 import { fetchEntity, fetchEntities } from "./fetch"
 import { isString } from "./utils"
 import type { CollectionOptions } from "./fetch"
-import { gatsbyNodeTypeName } from "./utils"
+import { gatsbyNodeTypeName, documentRelationships } from "./utils"
 
 let isFirstSource = true
 const pluginName = `gatsby-source-payload-cms`
@@ -157,6 +157,11 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   const prefix = pluginOptions.nodePrefix
 
   /**
+   * Collect relationship ids
+   */
+  let relationshipIds: { [key: string]: string } = {}
+
+  /**
    * Iterate over the data and create nodes
    */
   for (const result of collectionResults) {
@@ -171,6 +176,11 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
           data: collection,
         },
       })
+      // Populate relationshipIds
+      relationshipIds = {
+        ...documentRelationships(collection, collection.gatsbyNodeType),
+        ...relationshipIds,
+      }
     }
   }
   for (const result of globalResults) {
@@ -185,6 +195,11 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
           data: global,
         },
       })
+      // Populate relationshipIds
+      relationshipIds = {
+        ...documentRelationships(global, global.gatsbyNodeType),
+        ...relationshipIds,
+      }
     }
   }
 
