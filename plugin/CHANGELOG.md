@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.5.0...v0.6.0) (2023-06-22)
+
+
+### Features
+
+* **source-nodes:** support image cdn ([#44](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/44)) ([126b7a4](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/126b7a4db6161f4b2a08cdf497e3b2c3477d927a))
+
 ## [0.5.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.4.2...v0.5.0) (2023-06-22)
 
 
