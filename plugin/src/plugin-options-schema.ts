@@ -52,6 +52,8 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
           params: Joi.object(),
           /** Override limit in query params and disable paginated query */
           limit: Joi.number(),
+          /** Optional. Retrieve an image size. If blank, the original URL will be returned. */
+          // imageSize: Joi.string(),
         })
       )
     ),
@@ -76,6 +78,8 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     schemaCustomizations: Joi.string(),
     // Optional. Create local file nodes for upload collections.
     localFiles: Joi.boolean(),
+    // Optional. Create Gatsby Image CDN asset nodes for upload collections.
+    imageCdn: Joi.boolean(),
     /** A base URL for constructing imageUrls. Required for `localFiles`. */
     baseUrl: Joi.string().when(`localFiles`, { is: true, then: Joi.string().required() }),
   })

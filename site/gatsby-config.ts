@@ -76,8 +76,6 @@ const globalParams = {
   },
 }
 
-const baseUrl = `https://cms.teamtailor.app/`
-
 const payloadLocales = Object.keys(payloadLocaleMap)
 
 const config: GatsbyConfig = {
@@ -90,8 +88,9 @@ const config: GatsbyConfig = {
       options: {
         endpoint: process.env.PAYLOAD_BASE_URL,
         retries: 3,
-        localFiles: true,
-        baseUrl,
+        localFiles: false,
+        imageCdn: true,
+        baseUrl: process.env.PAYLOAD_CDN_URL,
         collectionTypes: [
           {
             slug: `events`,
