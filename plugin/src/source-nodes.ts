@@ -239,6 +239,9 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
       if (pluginOptions.localFiles) {
         createLocalFileNode(context, upload, relationshipIds)
       }
+      if (pluginOptions.imageCdn) {
+        createAssetNode(context, upload, relationshipIds)
+      }
     }
   }
 
@@ -307,14 +310,14 @@ export async function createLocalFileNode(
   relationshipIds?: { [key: string]: string }
 ) {
   const { createNode, createNodeField } = context.actions
-  const { cache } = context
+  const { getCache } = context
   const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
 
   const url = encodeURI(`${baseUrl}${data.url}` as string)
 
   const fileNode = await createRemoteFileNode({
     url,
-    cache,
+    getCache,
     createNode,
     createNodeId: () => `upload-${data.id}`,
   })
@@ -323,16 +326,24 @@ export async function createLocalFileNode(
       return value === data.id
     })
   )
-  await createNodeField({
-    node: fileNode,
-    name: `relationships`,
-    value: relationships,
-  })
+  if (relationships.length > 0) {
+    await createNodeField({
+      node: fileNode,
+      name: `relationships`,
+      value: relationships,
+    })
+  }
 }
 
-export function createAssetNode(gatsbyApi: SourceNodesArgs, data: any) {
-  const id = gatsbyApi.createNodeId(`${NODE_TYPES.Asset}-${data.url}`)
-
+export function createAssetNode(context: SourceNodesArgs, data: any, relationshipIds?: { [key: string]: string }) {
+  const id = context.createNodeId(`${NODE_TYPES.Asset}-${data.url}`)
+  const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
+  const url = encodeURI(`${baseUrl}${data.url}` as string)
+  const relationships: Array<string> = Object.keys(
+    pickBy(relationshipIds, (value) => {
+      return value === data.id
+    })
+  )
   /**
    * For Image CDN and the "RemoteFile" interface, these fields are required:
    * - url
@@ -344,30 +355,31 @@ export function createAssetNode(gatsbyApi: SourceNodesArgs, data: any) {
    */
   const assetNode = {
     id,
-    url: data.url,
+    url,
     /**
      * Don't hardcode the "mimeType" field, it has to match the input image. If you don't have that information, use:
      * @see https://github.com/nodeca/probe-image-size
      * For the sake of this demo, it can be hardcoded since all images are JPGs
      */
-    mimeType: `image/jpg`,
-    filename: data.url,
+    mimeType: data.mimeType,
+    filename: url,
     /**
      * If you don't know the width and height of the image, use: https://github.com/nodeca/probe-image-size
      */
     width: data.width,
     height: data.height,
-    placeholderUrl: `${data.url}&w=%width%&h=%height%`,
-    alt: data.alt,
+    // placeholderUrl: `${data.url}&w=%width%&h=%height%`,
+    relationships,
+    alt: data.alt || ``,
     parent: null,
     children: [],
     internal: {
       type: NODE_TYPES.Asset,
-      contentDigest: gatsbyApi.createContentDigest(data),
+      contentDigest: context.createContentDigest(data),
     },
   } satisfies IRemoteImageNodeInput
 
-  gatsbyApi.actions.createNode(assetNode)
+  context.actions.createNode(assetNode)
 
   /**
    * Return the id so it can be used for the foreign key relationship on the Post node.
