@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.4.1...v0.4.2) (2023-06-22)
+
+
+### Bug Fixes
+
+* **axios-instance:** reconfigure retry delay ([#40](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/40)) ([a8a9ffe](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/a8a9ffed5b972459c9d5b435a952f176a18e0445))
+
 ## [0.4.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.4.0...v0.4.1) (2023-06-21)
 
 
