@@ -199,7 +199,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
       })
       // Populate relationshipIds
       relationshipIds = {
-        ...documentRelationships(collection, collection.gatsbyNodeType),
+        ...documentRelationships(collection, [collection.gatsbyNodeType, collection.id].join(`.`)),
         ...relationshipIds,
       }
     }
@@ -309,9 +309,11 @@ export async function createLocalFileNode(
   const { createNode, createNodeField } = context.actions
   const { cache } = context
   const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
-  console.log(`creating remote file node for ${baseUrl}${data.url}`, data)
+
+  const url = encodeURI(`${baseUrl}${data.url}` as string)
+
   const fileNode = await createRemoteFileNode({
-    url: `${baseUrl}${data.url}` as string,
+    url,
     cache,
     createNode,
     createNodeId: () => `upload-${data.id}`,
@@ -323,7 +325,7 @@ export async function createLocalFileNode(
   )
   await createNodeField({
     node: fileNode,
-    name: `Relationships`,
+    name: `relationships`,
     value: relationships,
   })
 }

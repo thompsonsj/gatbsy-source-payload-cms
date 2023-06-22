@@ -66,7 +66,7 @@ const commonParams = {
   params: {
     depth: 10,
   },
-  ...(API_CALL_LIMIT === `true` && { limit: 5 }),
+  ...(API_CALL_LIMIT === `true` && { limit: 1000 }),
 }
 
 const globalParams = {
@@ -125,7 +125,10 @@ const config: GatsbyConfig = {
           { slug: `pricing`, locales: payloadLocales, ...globalParams },
           { slug: `ats`, locales: payloadLocales, ...globalParams },
         ],
-        uploadTypes: [{ slug: `marketing-site-images`, ...commonParams }],
+        uploadTypes: [
+          { slug: `marketing-site-images`, ...commonParams },
+          { slug: `media`, ...commonParams },
+        ],
         fallbackLocale: `en`,
         nodeTransform: {
           locale: (locale) => (isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale),

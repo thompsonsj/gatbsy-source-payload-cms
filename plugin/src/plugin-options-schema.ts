@@ -77,6 +77,6 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     // Optional. Create local file nodes for upload collections.
     localFiles: Joi.boolean(),
     /** A base URL for constructing imageUrls. Required for `localFiles`. */
-    baseUrl: Joi.string(),
+    baseUrl: Joi.string().when(`localFiles`, { is: true, then: Joi.string().required() }),
   })
 }
