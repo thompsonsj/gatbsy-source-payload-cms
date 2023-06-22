@@ -7,6 +7,8 @@ import { fetchEntity, fetchEntities } from "./fetch"
 import { isString } from "./utils"
 import type { CollectionOptions } from "./fetch"
 import { gatsbyNodeTypeName, documentRelationships } from "./utils"
+import { createRemoteFileNode } from "gatsby-source-filesystem"
+import { get, pickBy } from "lodash"
 
 let isFirstSource = true
 const pluginName = `gatsby-source-payload-cms`
@@ -21,7 +23,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   const { actions, reporter, cache, getNodes } = gatsbyApi
   const { touchNode } = actions
   const { endpoint } = pluginOptions
-  let { collectionTypes, globalTypes } = pluginOptions
+  let { collectionTypes, globalTypes, uploadTypes } = pluginOptions
 
   /**
    * It's good practice to give your users some feedback on progress and status. Instead of printing individual lines, use the activityTimer API.
@@ -97,6 +99,9 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   if (!Array.isArray(collectionTypes)) {
     collectionTypes = []
   }
+  if (!Array.isArray(uploadTypes)) {
+    uploadTypes = []
+  }
 
   // convert string collectionTypes and globalTypes to object
   const normalizedGlobalTypes: Array<CollectionOptions> = (globalTypes as any).map((globalType) => {
@@ -129,9 +134,25 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
       schema: collectionType.schema,
     }
   })
+  const normalizedUploadTypes: Array<CollectionOptions> = (uploadTypes as any).map((uploadType) => {
+    if (isString(uploadType)) {
+      return {
+        endpoint: new URL(`${uploadType}`, endpoint).href,
+        type: uploadType,
+        schema: null,
+      }
+    }
+    return {
+      endpoint: new URL(`${uploadType.slug}`, endpoint).href,
+      ...uploadType,
+      type: uploadType.slug,
+      schema: uploadType.schema,
+    }
+  })
 
   const collectionResults = await Promise.all(normalizedCollectionTypes.map((type) => fetchEntities(type, context)))
   const globalResults = await Promise.all(normalizedGlobalTypes.map((type) => fetchEntity(type, context)))
+  const uploadResults = await Promise.all(normalizedUploadTypes.map((type) => fetchEntities(type, context)))
 
   //console.log(await globalResults)
 
@@ -203,6 +224,24 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
     }
   }
 
+  for (const result of uploadResults) {
+    for (const upload of result) {
+      nodeBuilder({
+        gatsbyApi,
+        input: {
+          type: gatsbyNodeTypeName({
+            payloadSlug: global.gatsbyNodeType,
+            ...(isString(prefix) && { prefix: prefix as string }),
+          }),
+          data: upload,
+        },
+      })
+      if (pluginOptions.localFiles) {
+        createLocalFileNode(context, upload, relationshipIds)
+      }
+    }
+  }
+
   /*for (const author of authors) {
     nodeBuilder({ gatsbyApi, input: { type: NODE_TYPES.Author, data: author } })
   }*/
@@ -260,6 +299,33 @@ export function nodeBuilder({ gatsbyApi, input }: INodeBuilderArgs) {
    * @see https://www.gatsbyjs.com/docs/reference/config-files/actions/#createNode
    */
   gatsbyApi.actions.createNode(node)
+}
+
+export async function createLocalFileNode(
+  context: SourceNodesArgs,
+  data: any,
+  relationshipIds?: { [key: string]: string }
+) {
+  const { createNode, createNodeField } = context.actions
+  const { cache } = context
+  const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
+  console.log(`creating remote file node for ${baseUrl}${data.url}`, data)
+  const fileNode = await createRemoteFileNode({
+    url: `${baseUrl}${data.url}` as string,
+    cache,
+    createNode,
+    createNodeId: () => `upload-${data.id}`,
+  })
+  const relationships: Array<string> = Object.keys(
+    pickBy(relationshipIds, (value) => {
+      return value === data.id
+    })
+  )
+  await createNodeField({
+    node: fileNode,
+    name: `Relationships`,
+    value: relationships,
+  })
 }
 
 export function createAssetNode(gatsbyApi: SourceNodesArgs, data: any) {

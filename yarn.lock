@@ -8245,6 +8245,7 @@ __metadata:
     typescript: ^4.9.4
   peerDependencies:
     gatsby: ^5.0.0
+    gatsby-source-filesystem: ^5.0.0
   languageName: unknown
   linkType: soft
 

@@ -76,6 +76,8 @@ const globalParams = {
   },
 }
 
+const baseUrl = `https://cms.teamtailor.app/`
+
 const payloadLocales = Object.keys(payloadLocaleMap)
 
 const config: GatsbyConfig = {
@@ -88,6 +90,8 @@ const config: GatsbyConfig = {
       options: {
         endpoint: process.env.PAYLOAD_BASE_URL,
         retries: 3,
+        localFiles: true,
+        baseUrl,
         collectionTypes: [
           {
             slug: `events`,
@@ -121,6 +125,7 @@ const config: GatsbyConfig = {
           { slug: `pricing`, locales: payloadLocales, ...globalParams },
           { slug: `ats`, locales: payloadLocales, ...globalParams },
         ],
+        uploadTypes: [{ slug: `marketing-site-images`, ...commonParams }],
         fallbackLocale: `en`,
         nodeTransform: {
           locale: (locale) => (isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale),
