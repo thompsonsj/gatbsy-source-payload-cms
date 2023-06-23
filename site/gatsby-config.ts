@@ -26,13 +26,6 @@ type Author implements Node {
   _id: Int!
   name: String!
 }
-
-type Asset implements Node & RemoteFile {
-  url: String!
-  alt: String!
-  width: Int!
-  height: Int!
-}
 `
 
 const allSchemaCustomizations = `
