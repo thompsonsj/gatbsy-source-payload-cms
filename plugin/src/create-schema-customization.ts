@@ -19,7 +19,18 @@ export const createSchemaCustomization: GatsbyNode[`createSchemaCustomization`] 
 ) => {
   const { createTypes } = actions
 
-  const schemaCustomizations = pluginOptions.schemaCustomizations || ``
+  const schemaCustomizations = [pluginOptions.schemaCustomizations || ``]
+
+  if (pluginOptions.imageCdn) {
+    schemaCustomizations.push(`
+      type Asset implements Node & RemoteFile {
+        url: String!
+        alt: String!
+        width: Int!
+        height: Int!
+      }
+    `)
+  }
 
   /**
    * You most often will use SDL syntax to define your data types. However, you can also use type builders for more advanced use cases
