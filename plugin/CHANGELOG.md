@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.6.0...v0.6.1) (2023-06-23)
+
+
+### Bug Fixes
+
+* **create-schema-customization:** create remote file type if imageCdn ([#46](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/46)) ([03b19d0](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/03b19d0f45cc8352020fc8e70c2cdb6e8235a365))
+
 ## [0.6.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.5.0...v0.6.0) (2023-06-22)
 
 
