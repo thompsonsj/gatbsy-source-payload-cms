@@ -118,7 +118,7 @@ const config: GatsbyConfig = {
           { slug: `ats`, locales: payloadLocales, ...globalParams },
         ],
         uploadTypes: [
-          { slug: `marketing-site-images`, ...commonParams },
+          { slug: `marketing-site-images`, ...commonParams, imageSize: `desktop` },
           { slug: `media`, ...commonParams },
         ],
         fallbackLocale: `en`,

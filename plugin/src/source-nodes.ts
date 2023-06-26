@@ -4,7 +4,7 @@ import type { IPluginOptionsInternal } from "./types"
 import { CACHE_KEYS, NODE_TYPES } from "./constants"
 import { createAxiosInstance } from "./axios-instance"
 import { fetchEntity, fetchEntities } from "./fetch"
-import { isString } from "./utils"
+import { isString, payloadImageUrl } from "./utils"
 import type { CollectionOptions } from "./fetch"
 import { gatsbyNodeTypeName, documentRelationships } from "./utils"
 import { createRemoteFileNode } from "gatsby-source-filesystem"
@@ -230,7 +230,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
         gatsbyApi,
         input: {
           type: gatsbyNodeTypeName({
-            payloadSlug: global.gatsbyNodeType,
+            payloadSlug: upload.gatsbyNodeType,
             ...(isString(prefix) && { prefix: prefix as string }),
           }),
           data: upload,
@@ -312,8 +312,7 @@ export async function createLocalFileNode(
   const { createNode, createNodeField } = context.actions
   const { getCache } = context
   const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
-
-  const url = encodeURI(`${baseUrl}${data.url}` as string)
+  const url = encodeURI(payloadImageUrl(data, data.payloadImageSize, baseUrl)) as string
 
   const fileNode = await createRemoteFileNode({
     url,
@@ -338,7 +337,7 @@ export async function createLocalFileNode(
 export function createAssetNode(context: SourceNodesArgs, data: any, relationshipIds?: { [key: string]: string }) {
   const id = context.createNodeId(`${NODE_TYPES.Asset}-${data.url}`)
   const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
-  const url = encodeURI(`${baseUrl}${data.url}` as string)
+  const url = encodeURI(payloadImageUrl(data, data.payloadImageSize, baseUrl)) as string
   const relationships: Array<string> = Object.keys(
     pickBy(relationshipIds, (value) => {
       return value === data.id
