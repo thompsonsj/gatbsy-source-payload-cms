@@ -4,13 +4,15 @@ interface IFormatEntry {
   data: { [key: string]: unknown }
   locale?: string
   gatsbyNodeType: string
+  payloadImageSize?: string
 }
 
-export const formatEntity = ({ data, locale, gatsbyNodeType }: IFormatEntry, context?: any) => {
+export const formatEntity = ({ data, locale, gatsbyNodeType, payloadImageSize }: IFormatEntry, context?: any) => {
   const res = {
     ...data,
     gatsbyNodeType,
     ...(locale && { locale: locale }),
+    payloadImageSize,
   }
   const transformedRes: { [key: string]: any } = {}
   Object.keys(res).forEach((value) => {

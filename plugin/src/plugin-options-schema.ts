@@ -53,7 +53,7 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
           /** Override limit in query params and disable paginated query */
           limit: Joi.number(),
           /** Optional. Retrieve an image size. If blank, the original URL will be returned. */
-          // imageSize: Joi.string(),
+          imageSize: Joi.string(),
         })
       )
     ),

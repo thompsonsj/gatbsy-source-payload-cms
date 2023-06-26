@@ -1,6 +1,6 @@
 import dot from "dot-object"
 import fetch, { HeadersInit } from "node-fetch"
-import { camelCase, isEmpty, omitBy, upperFirst } from "lodash"
+import { camelCase, get, isEmpty, omitBy, upperFirst } from "lodash"
 
 const headers = {
   "Content-Type": `application/json`,
@@ -57,4 +57,27 @@ export const documentRelationships = (doc: { [key: string]: unknown }, prefix?: 
     : doc
   const dotNotationDoc = dot.dot(document)
   return omitBy(dotNotationDoc, (_value, key) => !key.endsWith(`.id`))
+}
+
+const removeTrailingSlash = (str: string): string => str.replace(/\/$/, ``)
+
+export const payloadImage = (apiResponse: { [key: string]: any }, size?: string): any => {
+  let image = size ? get(apiResponse, `sizes.${size}`, apiResponse) : apiResponse
+  // some sizes may not exist (e.g resize operations on images that are too small)
+  if (!image || !image.url) {
+    image = apiResponse
+  }
+  return image
+}
+
+export const payloadImageUrl = (
+  apiResponse: { [key: string]: any },
+  size?: string,
+  baseUrl?: string
+): string | undefined => {
+  if (!apiResponse || typeof apiResponse.url === `undefined`) {
+    return undefined
+  }
+  const url = payloadImage(apiResponse, size).url
+  return url ? `${removeTrailingSlash(baseUrl)}${url}` : undefined
 }

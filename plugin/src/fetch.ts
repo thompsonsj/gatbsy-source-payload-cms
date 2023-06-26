@@ -19,6 +19,7 @@ export type CollectionOptions = {
   locales?: Array<string>
   params?: { [key: string]: unknown }
   limit?: number
+  imageSize?: string
 }
 
 export const fetchEntity = async (query: CollectionOptions, context) => {
@@ -186,6 +187,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
                 data: entry,
                 gatsbyNodeType: query.type,
                 locale,
+                ...(query.imageSize && { payloadImageSize: query.imageSize }),
               },
               context
             )
@@ -227,6 +229,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
             {
               data: entry,
               gatsbyNodeType: query.type,
+              ...(query.imageSize && { payloadImageSize: query.imageSize }),
             },
             context
           )
