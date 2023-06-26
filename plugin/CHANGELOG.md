@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.6.1...v0.7.0) (2023-06-26)
+
+
+### Features
+
+* add upload imageSize option ([#48](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/48)) ([7265e5f](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/7265e5f01e59fd99d0e8d664b4173923dd9eea1b))
+
 ## [0.6.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.6.0...v0.6.1) (2023-06-23)
 
 
