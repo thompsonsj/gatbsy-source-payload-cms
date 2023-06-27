@@ -130,7 +130,6 @@ const config: GatsbyConfig = {
               isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale
             ),
         },
-        schemaCustomizations: allSchemaCustomizations,
       } satisfies IPluginOptions,
     },
     `gatsby-plugin-image`,
