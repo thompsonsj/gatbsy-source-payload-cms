@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.7.0...v0.7.1) (2023-06-27)
+
+
+### Bug Fixes
+
+* remove schema customization option ([#50](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/50)) ([771a384](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/771a3840ef1d9f49be0b10524e626b0ccd751d59))
+
 ## [0.7.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.6.1...v0.7.0) (2023-06-26)
 
 
