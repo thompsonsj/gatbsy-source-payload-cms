@@ -19,7 +19,7 @@ export const createSchemaCustomization: GatsbyNode[`createSchemaCustomization`] 
 ) => {
   const { createTypes } = actions
 
-  const schemaCustomizations = [pluginOptions.schemaCustomizations || ``]
+  const schemaCustomizations = []
 
   if (pluginOptions.imageCdn) {
     schemaCustomizations.push(`
@@ -36,7 +36,7 @@ export const createSchemaCustomization: GatsbyNode[`createSchemaCustomization`] 
    * You most often will use SDL syntax to define your data types. However, you can also use type builders for more advanced use cases
    * @see https://www.gatsbyjs.com/docs/reference/graphql-data-layer/schema-customization/#gatsby-type-builders
    */
-  if (schemaCustomizations) {
+  if (schemaCustomizations.length > 0) {
     createTypes(schemaCustomizations)
   }
 }

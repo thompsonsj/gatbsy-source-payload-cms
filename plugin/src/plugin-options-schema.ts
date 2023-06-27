@@ -68,14 +68,6 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     nodePrefix: Joi.string(),
     // Optional. Map Payload locales to different strings in the resulting nodes.
     nodeTransform: Joi.object(),
-    /**
-     * Create schema customizations
-     *
-     * Optional. Passed to the `createTypes` action in createSchemaCustomization.
-     *
-     * @see https://www.gatsbyjs.com/docs/reference/graphql-data-layer/schema-customization
-     */
-    schemaCustomizations: Joi.string(),
     // Optional. Create local file nodes for upload collections.
     localFiles: Joi.boolean(),
     // Optional. Create Gatsby Image CDN asset nodes for upload collections.
