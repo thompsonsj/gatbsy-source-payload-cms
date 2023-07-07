@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.7.1...v0.8.0) (2023-07-07)
+
+
+### Features
+
+* **gatsby-config:** add apiPath parameter for globals ([#52](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/52)) ([aaa1e5d](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/aaa1e5d4ad2f6a0e89efd9921cdd6b6a7e577099))
+
 ## [0.7.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.7.0...v0.7.1) (2023-06-27)
 
 
