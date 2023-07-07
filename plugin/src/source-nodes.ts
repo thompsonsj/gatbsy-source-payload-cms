@@ -112,8 +112,9 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
         schema: null,
       }
     }
+    const urlPath = globalType.apiPath ? globalType.apiPath : `globals/${globalType.slug}`
     return {
-      endpoint: new URL(`globals/${globalType.slug}`, endpoint).href,
+      endpoint: new URL(urlPath, endpoint).href,
       ...globalType,
       type: globalType.slug,
       schema: globalType.schema,

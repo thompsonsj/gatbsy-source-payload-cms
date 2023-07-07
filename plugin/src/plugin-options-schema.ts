@@ -37,6 +37,8 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
           params: Joi.object(),
           /** Override limit in query params and disable paginated query */
           limit: Joi.number(),
+          /** Defaults to `globals/:slug` */
+          apiPath: Joi.string(),
         })
       )
     ),
