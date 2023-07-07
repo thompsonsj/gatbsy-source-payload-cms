@@ -109,7 +109,7 @@ const config: GatsbyConfig = {
           },
         ],
         globalTypes: [
-          { slug: `customers`, locales: payloadLocales, ...globalParams },
+          { slug: `customers`, locales: payloadLocales, ...globalParams, apiPath: `globals/customers/icu` },
           { slug: `enterprise`, locales: payloadLocales, ...globalParams },
           { slug: `careers`, locales: payloadLocales, ...globalParams },
           { slug: `statistics`, locales: payloadLocales, ...globalParams },
@@ -130,6 +130,7 @@ const config: GatsbyConfig = {
               isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale
             ),
         },
+        // schemaCustomizations: allSchemaCustomizations,
       } satisfies IPluginOptions,
     },
     `gatsby-plugin-image`,
