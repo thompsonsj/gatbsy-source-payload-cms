@@ -4,11 +4,10 @@ import type { IPluginOptionsInternal } from "./types"
 import { CACHE_KEYS, NODE_TYPES } from "./constants"
 import { createAxiosInstance } from "./axios-instance"
 import { fetchEntity, fetchEntities } from "./fetch"
-import { isString, payloadImageUrl } from "./utils"
-import type { CollectionOptions } from "./fetch"
+import { normalizeGlobals, payloadImageUrl } from "./utils"
 import { gatsbyNodeTypeName, documentRelationships } from "./utils"
 import { createRemoteFileNode } from "gatsby-source-filesystem"
-import { get, pickBy } from "lodash"
+import { get, isString, pickBy } from "lodash"
 import { normalizeCollections } from "./utils"
 
 let isFirstSource = true
@@ -105,44 +104,13 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   }
 
   // convert string collectionTypes and globalTypes to object
-  const normalizedGlobalTypes: Array<CollectionOptions> = (globalTypes as any).map((globalType) => {
-    if (isString(globalType)) {
-      return {
-        endpoint: new URL(`globals/${globalType}`, endpoint).href,
-        type: globalType,
-        schema: null,
-      }
-    }
-    const urlPath = globalType.apiPath ? globalType.apiPath : `globals/${globalType.slug}`
-    return {
-      endpoint: new URL(urlPath, endpoint).href,
-      ...globalType,
-      type: globalType.slug,
-      schema: globalType.schema,
-    }
-  })
+  const normalizedGlobalTypes = normalizeGlobals(globalTypes, endpoint)
   const normalizedCollectionTypes = normalizeCollections(collectionTypes, endpoint)
-  const normalizedUploadTypes: Array<CollectionOptions> = (uploadTypes as any).map((uploadType) => {
-    if (isString(uploadType)) {
-      return {
-        endpoint: new URL(`${uploadType}`, endpoint).href,
-        type: uploadType,
-        schema: null,
-      }
-    }
-    return {
-      endpoint: new URL(`${uploadType.slug}`, endpoint).href,
-      ...uploadType,
-      type: uploadType.slug,
-      schema: uploadType.schema,
-    }
-  })
+  const normalizedUploadTypes = normalizeCollections(uploadTypes, endpoint)
 
   const collectionResults = await Promise.all(normalizedCollectionTypes.map((type) => fetchEntities(type, context)))
   const globalResults = await Promise.all(normalizedGlobalTypes.map((type) => fetchEntity(type, context)))
   const uploadResults = await Promise.all(normalizedUploadTypes.map((type) => fetchEntities(type, context)))
-
-  //console.log(await globalResults)
 
   /**
    * Gatsby's cache API uses LMDB to store data inside the .cache/caches folder.
