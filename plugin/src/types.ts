@@ -20,9 +20,35 @@ export type NodeBuilderInput =
   | { type: typeof NODE_TYPES.Author; data: IAuthorInput }
   | { type: string; data: IPayloadGlobalApiResponse }
 
+export interface ICollectionTypeObject {
+  slug: string
+  locales?: Array<string>
+  params?: { [key: string]: string }
+  limit?: number
+}
+
+export interface IUploadTypeObject extends ICollectionTypeObject {
+  slug: string
+  locales?: Array<string>
+  params?: { [key: string]: string }
+  limit?: number
+  imageSize?: string
+}
+
+export interface IGlobalTypeObject extends ICollectionTypeObject {
+  slug: string
+  locales?: Array<string>
+  params?: { [key: string]: string }
+  limit?: number
+  apiPath?: string
+}
+
 interface IPluginOptionsKeys {
   endpoint: string
   schemaCustomizations?: string
+  globalTypes?: Array<string | IGlobalTypeObject>
+  collectionTypes?: Array<string | ICollectionTypeObject>
+  uploadTypes?: Array<string | IUploadTypeObject>
 }
 
 /**
