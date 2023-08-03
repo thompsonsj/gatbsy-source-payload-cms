@@ -1,6 +1,5 @@
 import { createAssetNode, nodeBuilder } from "../source-nodes";
-import { authorFixture, postFixture } from "./fixtures";
-import { uploadImageFixture } from "./fixtures/uploads/image";
+import { authorFixture, postFixture, uploadImageFixture } from "./fixtures";
 
 const nodeIdPlaceholder = `unique-id`;
 const contentDigestPlaceholder = `unique-content-digest`;
