@@ -1,5 +1,6 @@
 import { createAssetNode, nodeBuilder } from "../source-nodes";
-import { authorFixture, postFixture, postImageFixture } from "./fixtures";
+import { authorFixture, postFixture } from "./fixtures";
+import { uploadImageFixture } from "./fixtures/uploads/image";
 
 const nodeIdPlaceholder = `unique-id`;
 const contentDigestPlaceholder = `unique-content-digest`;
@@ -87,26 +88,26 @@ describe(`sourceNodes`, () => {
   });
   describe(`createAssetNode`, () => {
     it(`should create correct node shape`, () => {
-      const id = createAssetNode(gatsbyApi, postImageFixture);
+      const id = createAssetNode(gatsbyApi, uploadImageFixture);
 
       expect(id).toEqual(nodeIdPlaceholder);
       expect(gatsbyApi.actions.createNode.mock.calls[0][0])
         .toMatchInlineSnapshot(`
         {
-          "alt": "brown and white long coated dog",
+          "alt": "Two businesspeople in a meeting room looking at a phone",
           "children": [],
-          "filename": "https://images.unsplash.com/photo-1615751072497-5f5169febe17?fm=jpg",
-          "height": 4032,
+          "filename": "/marketing-site-images/muhammad-faiz-zulkeflee-alw-CwGFmwQ-unsplash-1.jpg",
+          "height": 5000,
           "id": "unique-id",
           "internal": {
             "contentDigest": "unique-content-digest",
             "type": "Asset",
           },
-          "mimeType": "image/jpg",
+          "mimeType": "image/jpeg",
           "parent": null,
-          "placeholderUrl": "https://images.unsplash.com/photo-1615751072497-5f5169febe17?fm=jpg&w=%width%&h=%height%",
-          "url": "https://images.unsplash.com/photo-1615751072497-5f5169febe17?fm=jpg",
-          "width": 3024,
+          "relationships": [],
+          "url": "/marketing-site-images/muhammad-faiz-zulkeflee-alw-CwGFmwQ-unsplash-1.jpg",
+          "width": 4000,
         }
       `);
     });

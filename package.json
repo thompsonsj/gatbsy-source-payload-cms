@@ -22,10 +22,10 @@
     "start:api": "npm-run-all build:api serve:api",
     "lint": "eslint . --ext .ts,.tsx,.js",
     "lint:fix": "yarn lint --fix",
-    "test": "yarn workspace plugin test",
+    "test": "yarn workspace gatsby-source-payload-cms test",
     "clean": "npm-run-all -p 'clean:*'",
     "clean:api": "yarn workspace api clean",
-    "clean:plugin": "yarn workspace plugin clean",
+    "clean:plugin": "yarn workspace gatsby-source-payload-cms clean",
     "clean:site": "yarn workspace site clean"
   },
   "license": "MIT",
