@@ -20,9 +20,18 @@ export type NodeBuilderInput =
   | { type: typeof NODE_TYPES.Author; data: IAuthorInput }
   | { type: string; data: IPayloadGlobalApiResponse }
 
+export interface ICollectionTypeObject {
+  slug: string
+  locales?: Array<string>
+  params?: { [key: string]: string }
+  limit?: number
+  apiPath?: string
+}
+
 interface IPluginOptionsKeys {
   endpoint: string
   schemaCustomizations?: string
+  collectionTypes?: Array<string | ICollectionTypeObject>
 }
 
 /**

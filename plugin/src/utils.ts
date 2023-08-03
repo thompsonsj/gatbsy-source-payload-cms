@@ -2,6 +2,8 @@ import dot from "dot-object"
 import fetch, { HeadersInit } from "node-fetch"
 import { camelCase, get, isEmpty, omitBy, upperFirst } from "lodash"
 
+import type { ICollectionTypeObject } from "./types"
+
 const headers = {
   "Content-Type": `application/json`,
 } satisfies HeadersInit
@@ -81,3 +83,25 @@ export const payloadImageUrl = (
   const url = payloadImage(apiResponse, size).url
   return url ? `${removeTrailingSlash(baseUrl)}${url}` : undefined
 }
+
+export const normalizeCollections = (collectionTypes: Array<string | ICollectionTypeObject>, endpoint: string) =>
+  collectionTypes.map((collectionType) => normalizeCollection(collectionType, endpoint))
+
+const normalizeCollection = (collectionType: string | ICollectionTypeObject, endpoint: string) => {
+  if (isString(collectionType)) {
+    normalizeCollectionString(collectionType as string, endpoint)
+  }
+  return normalizeCollectionObject(collectionType as ICollectionTypeObject, endpoint)
+}
+
+const normalizeCollectionString = (collectionType: string, endpoint: string) => ({
+  endpoint: new URL(`${collectionType}`, endpoint).href,
+  type: collectionType,
+  schema: null,
+})
+
+const normalizeCollectionObject = (collectionType: ICollectionTypeObject, endpoint: string) => ({
+  endpoint: new URL(`${collectionType.slug}`, endpoint).href,
+  ...collectionType,
+  type: collectionType.slug,
+})

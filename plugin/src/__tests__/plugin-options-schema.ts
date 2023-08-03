@@ -32,4 +32,43 @@ describe(`pluginOptionsSchema`, () => {
     expect(isValid).toBe(true)
     expect(errors).toEqual([])
   })
+  it(`should validate correct options`, async () => {
+    const options = {
+      endpoint: `http://localhost:4000/graphql`,
+    }
+
+    const { isValid, errors } = await testPluginOptionsSchema(pluginOptionsSchema, options)
+
+    expect(isValid).toBe(true)
+    expect(errors).toEqual([])
+  })
+  it(`accepts collectionTypes as strings`, async () => {
+    const options = {
+      endpoint: `http://localhost:4000/graphql`,
+      collectionTypes: [`collection-one`, `collection-two`],
+    }
+
+    const { isValid, errors } = await testPluginOptionsSchema(pluginOptionsSchema, options)
+
+    expect(isValid).toBe(true)
+    expect(errors).toEqual([])
+  })
+  it(`accepts collectionTypes as objects`, async () => {
+    const options = {
+      endpoint: `http://localhost:4000/graphql`,
+      collectionTypes: [
+        {
+          slug: `collection-one`,
+        },
+        {
+          slug: `collection-two`,
+        },
+      ],
+    }
+
+    const { isValid, errors } = await testPluginOptionsSchema(pluginOptionsSchema, options)
+
+    expect(isValid).toBe(true)
+    expect(errors).toEqual([])
+  })
 })

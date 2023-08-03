@@ -9,6 +9,7 @@ import type { CollectionOptions } from "./fetch"
 import { gatsbyNodeTypeName, documentRelationships } from "./utils"
 import { createRemoteFileNode } from "gatsby-source-filesystem"
 import { get, pickBy } from "lodash"
+import { normalizeCollections } from "./utils"
 
 let isFirstSource = true
 const pluginName = `gatsby-source-payload-cms`
@@ -120,21 +121,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
       schema: globalType.schema,
     }
   })
-  const normalizedCollectionTypes: Array<CollectionOptions> = (collectionTypes as any).map((collectionType) => {
-    if (isString(collectionType)) {
-      return {
-        endpoint: new URL(`${collectionType}`, endpoint).href,
-        type: collectionType,
-        schema: null,
-      }
-    }
-    return {
-      endpoint: new URL(`${collectionType.slug}`, endpoint).href,
-      ...collectionType,
-      type: collectionType.slug,
-      schema: collectionType.schema,
-    }
-  })
+  const normalizedCollectionTypes = normalizeCollections(collectionTypes, endpoint)
   const normalizedUploadTypes: Array<CollectionOptions> = (uploadTypes as any).map((uploadType) => {
     if (isString(uploadType)) {
       return {
