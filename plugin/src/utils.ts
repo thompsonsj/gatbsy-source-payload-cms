@@ -92,7 +92,7 @@ export const normalizeCollections = (collectionTypes: Array<string | ICollection
 
 const normalizeCollection = (collectionType: string | ICollectionTypeObject, endpoint: string) => {
   if (isString(collectionType)) {
-    normalizeCollectionString(collectionType as string, endpoint)
+    return normalizeCollectionString(collectionType as string, endpoint)
   }
   return normalizeCollectionObject(collectionType as ICollectionTypeObject, endpoint)
 }
@@ -110,7 +110,7 @@ const normalizeCollectionObject = (collectionType: ICollectionTypeObject, endpoi
 
 const normalizeGlobal = (globalType: string | IGlobalTypeObject, endpoint: string) => {
   if (isString(globalType)) {
-    normalizeGlobalString(globalType as string, endpoint)
+    return normalizeGlobalString(globalType as string, endpoint)
   }
   return normalizeGlobalObject(globalType as IGlobalTypeObject, endpoint)
 }
