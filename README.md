@@ -39,103 +39,80 @@ Simple config:
 More options:
 
 ```ts
-const schemaCustomizations = `
-type Post implements Node {
-  id: ID!
-  _id: Int!
-  slug: String!
-  title: String!
-  author: Author @link(by: "name")
-  image: Asset @link
-}
-
-type Author implements Node {
-  id: ID!
-  _id: Int!
-  name: String!
-}
-`
-
 {
   resolve: `gatsby-source-payload-cms`,
   options: {
     endpoint: `https://yourapp.payload.app/api/`,
+    accessToken: `<your-payload-cms-api-key>`,
+    imageCdn: true,
+    localFiles: false,
     collectionTypes: [
       `events`,
       `landing-pages`,
       { slug: `policies`, locales: [`en`, `fr_FR`], params: { [`where[_status][equals]`]: `published` } },
     ],
     globalTypes: [{ slug: `customers`, locales: [`en`, `fr_FR`] }, `statistics`],
+    uploadTypes: [
+      `headshots`,
+      `logo-images`,
+    ],
     fallbackLocale: `en`,
   },
-  /**
-   * Create schema customizations
-   *
-   * Optional. Passed to the `createTypes` action in createSchemaCustomization.
-   *
-   * @see https://www.gatsbyjs.com/docs/reference/graphql-data-layer/schema-customization
-   */
-  schemaCustomizations,
 },
 ```
-
-## Development
-
-Use two terminals.
-
-- `yarn develop:site` runs a local test Gatsby installation to test and verify sourced data.
-- `yarn develop:plugin` compiles the plugin from TypeScript as you work.
-
-## Engineering
-
-Developed based on:
-
-- https://www.gatsbyjs.com/docs/tutorial/creating-a-source-plugin/
-- https://github.com/gatsbyjs/creating-source-plugin-tutorial.git
-- https://github.com/gatsby-uc/plugins/tree/main/packages/gatsby-source-strapi
 
 ## Points to note
 
 - `gatsbyNodeType` is a reserved key for API responses. If you have a Payload field with this name, it will be overwritten.
+- If using Gatsby Image CDN, a `gatsbyImageCdn` field will be added to upload type nodes.
 
-# creating-source-plugin-tutorial
+## Gatsby Image CDN support
 
-## Prerequisites
+Gatsby Image CDN support is available for [Payload Upload collections](https://payloadcms.com/docs/upload/overview).
 
-You'll need to have these tools installed:
+Define your Upload collection slugs and enable the feature:
 
-- Node.js (v18 or newer)
-- Git
-- Yarn
+```ts
+{
+  resolve: `gatsby-source-payload-cms`,
+  options: {
+    endpoint: `https://yourapp.payload.app/api/`,
+    imageCdn: true,
+    uploadTypes: [
+      `headshots`,
+      `logo-images`,
+    ],
+  },
+},
+```
 
-You can also follow [Part 0: Set Up Your Development Environment](https://www.gatsbyjs.com/docs/tutorial/part-0/) for more detailed instructions.
+`Asset` nodes will be created for each upload. A `gatsbyImageCdn` field is added to each Upload node that links to the appropriate `Asset` node.
 
-## Usage
+An example GraphQL query on all Upload nodes:
 
-1. Clone this project
-1. `yarn` to install dependencies
-1. `yarn test` to run unit tests
-1. `yarn lint:fix` to run linting
+```graphql
+{
+  allPayloadMedia {
+    nodes {
+      url
+      gatsbyImageCdn {
+        publicUrl
+        gatsbyImage(height: 1000)
+      }
+    }
+  }
+}
+```
 
-### Development
+A `relationships` field is made available on `Asset` nodes. This can be used to query assets or determine where an asset is used.
 
-1. `yarn develop:deps` to build & serve the API at http://localhost:4000, and to also watch the source plugin for changes
-1. `yarn develop:site` in another terminal window to run `gatsby develop` for the test site
-
-If you make changes to the source plugin you will need to restart the `site` server to see the changes reflected in the site.
-
-### Build
-
-1. `yarn start:api` to build and serve the API at http://localhost:4000
-1. `yarn build` in another terminal window to build the production plugin and site
-1. `yarn serve:site` to serve the Gatsby site at http://localhost:9000. You should see an overview of all posts
-
-## Project structure
-
-This project includes three directories:
-
-- `api` is the example mock backend API you will source from
-- `plugin` is the example source plugin
-- `site` is the example site
-
-The source plugin consumes the API, and the site uses the source plugin.
+```ts
+{
+  "relationships": [
+    "events.645e126f26a303cb2e24f857.layout[2].image.id",
+    "events.646c92fad358f527dfb44142.layout[2].image.id",
+    "events.6478badec093e67255801925.layout[2].image.id",
+    "events.64aeb9db71885e8c72c02327.layout[2].image.id"
+  ]
+}
+```

@@ -82,13 +82,24 @@ export const payloadImageUrl = (
   return url ? `${removeTrailingSlash(baseUrl)}${url}` : undefined
 }
 
-export const normalizeGlobals = (globalTypes: Array<string | IGlobalTypeObject>, endpoint: string) =>
-  globalTypes.map((globalType) => {
+export const normalizeGlobals = (globalTypes: Array<string | IGlobalTypeObject> | undefined, endpoint: string) => {
+  if (!globalTypes) {
+    return []
+  }
+  return globalTypes.map((globalType) => {
     return normalizeGlobal(globalType, endpoint)
   })
+}
 
-export const normalizeCollections = (collectionTypes: Array<string | ICollectionTypeObject>, endpoint: string) =>
-  collectionTypes.map((collectionType) => normalizeCollection(collectionType, endpoint))
+export const normalizeCollections = (
+  collectionTypes: Array<string | ICollectionTypeObject> | undefined,
+  endpoint: string
+) => {
+  if (!collectionTypes) {
+    return []
+  }
+  return collectionTypes.map((collectionType) => normalizeCollection(collectionType, endpoint))
+}
 
 const normalizeCollection = (collectionType: string | ICollectionTypeObject, endpoint: string) => {
   if (isString(collectionType)) {

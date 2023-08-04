@@ -1,5 +1,7 @@
 import type { GatsbyNode } from "gatsby"
 import type { IPluginOptionsInternal } from "./types"
+import { gatsbyNodeTypeName, normalizeCollections } from "./utils"
+import { isString } from "lodash"
 
 /**
  * By default Gatsby, infers the data types for each node. This can be sometimes brittle or lead to hard-to-debug errors.
@@ -30,6 +32,19 @@ export const createSchemaCustomization: GatsbyNode[`createSchemaCustomization`] 
         height: Int!
       }
     `)
+    const normalizedUploadTypes = normalizeCollections(pluginOptions.uploadTypes, pluginOptions.endpoint)
+    normalizedUploadTypes.forEach((uploadType) => {
+      const type = gatsbyNodeTypeName({
+        payloadSlug: uploadType.type,
+        ...(isString(pluginOptions.prefix) && { prefix: pluginOptions.prefix as string }),
+      })
+      console.log(type)
+      schemaCustomizations.push(`
+        type ${type} implements Node {
+          gatsbyImageCdn: Asset @link
+        }
+      `)
+    })
   }
 
   /**
