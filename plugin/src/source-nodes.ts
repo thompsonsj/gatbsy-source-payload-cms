@@ -23,7 +23,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
   const { actions, reporter, cache, getNodes } = gatsbyApi
   const { touchNode } = actions
   const { endpoint } = pluginOptions
-  let { collectionTypes, globalTypes, uploadTypes } = pluginOptions
+  const { collectionTypes, globalTypes, uploadTypes } = pluginOptions
 
   /**
    * It's good practice to give your users some feedback on progress and status. Instead of printing individual lines, use the activityTimer API.
@@ -90,17 +90,6 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
     axiosInstance,
     ...gatsbyApi,
     pluginOptions,
-  }
-
-  // collectionTypes and globalTypes always an array
-  if (!Array.isArray(globalTypes)) {
-    globalTypes = []
-  }
-  if (!Array.isArray(collectionTypes)) {
-    collectionTypes = []
-  }
-  if (!Array.isArray(uploadTypes)) {
-    uploadTypes = []
   }
 
   // convert string collectionTypes and globalTypes to object
@@ -182,6 +171,13 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
 
   for (const result of uploadResults) {
     for (const upload of result) {
+      let imageCdnId
+      if (pluginOptions.localFiles) {
+        createLocalFileNode(context, upload, relationshipIds)
+      }
+      if (pluginOptions.imageCdn) {
+        imageCdnId = await createAssetNode(context, upload, relationshipIds)
+      }
       nodeBuilder({
         gatsbyApi,
         input: {
@@ -189,15 +185,12 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
             payloadSlug: upload.gatsbyNodeType,
             ...(isString(prefix) && { prefix: prefix as string }),
           }),
-          data: upload,
+          data: {
+            ...upload,
+            ...(imageCdnId && { gatsbyImageCdn: imageCdnId }),
+          },
         },
       })
-      if (pluginOptions.localFiles) {
-        createLocalFileNode(context, upload, relationshipIds)
-      }
-      if (pluginOptions.imageCdn) {
-        createAssetNode(context, upload, relationshipIds)
-      }
     }
   }
 
