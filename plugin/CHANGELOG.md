@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.8.0...v0.9.0) (2023-08-04)
+
+
+### Features
+
+* **source-nodes:** add gatsbyImageCdn field to upload nodes ([#56](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/56)) ([fa11f36](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/fa11f36a888fcc6e5c6f061320b9654a2ed31b0a))
+
 ## [0.8.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.7.1...v0.8.0) (2023-07-07)
 
 
