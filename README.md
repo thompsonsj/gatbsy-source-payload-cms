@@ -92,19 +92,76 @@ An example GraphQL query on all Upload nodes:
 
 ```graphql
 {
-  allPayloadMedia {
+  allPayloadHeadshots {
     nodes {
       url
       gatsbyImageCdn {
         publicUrl
-        gatsbyImage(height: 1000)
+        gatsbyImage(height: 600)
       }
     }
   }
 }
 ```
 
-A `relationships` field is made available on `Asset` nodes. This can be used to query assets or determine where an asset is used.
+### Relationships
+
+In the previous example, `PayloadHeadshots` (sourced from a `headshots` upload collection in Payload CMS) is a made available to Gatsby with a `gatsbyImageCdn` field that contains the corresponding Gatsby Image CDN asset.
+
+However, the `gatsbyImageCdn` field will not be available when `PayloadHeadshots` is made available through a relationship. For example, a `PayloadTestimonials` type might include a `PayloadHeadshots` type as a relationship.
+
+There are two ways to make the `gatsbyImageCdn` field available in this scenario.
+
+#### Resolvers
+
+Add a custom resolver that creates a new field linking to the upload collection Gatsby GraphQL type.
+
+```ts
+export const createResolvers: GatsbyNode['createResolvers'] = async ({
+  createResolvers,
+}) => {
+  createResolvers({
+    PayloadTestimonials: {
+      headshotCdn: {
+        type: 'PayloadHeadshots',
+        resolve: (source: any, args: any, context: any, info: any) =>
+          source.headshot
+            ? context.nodeModel.findOne({
+                type: 'PayloadHeadshots',
+                query: {
+                  filter: { _id: { eq: source.headshot.id } },
+                },
+              }) || null
+            : null,
+      },
+    },
+  });
+};
+```
+
+This additional field can now be queried.
+
+```graphql
+testimonial: payloadTestimonials() {
+  companyName
+  jobTitle
+  name
+  quote
+  headshot: headshotCdn {
+    gatsbyImageCdn {
+      ...HeadshotQuery
+    }
+  }
+}
+```
+
+#### Relationships field
+
+For situations where adding custom resolvers can be complicated, a `relationships` field is made available on `Asset` nodes.
+
+This can be used to query assets or determine where an asset is used.
+
+This is particularly useful for [block fields](https://payloadcms.com/docs/fields/blocks) or deeply nested upload relationships. In this situation, custom resolvers are complicated to create and maintain.
 
 ```ts
 {
