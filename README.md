@@ -173,3 +173,14 @@ This is particularly useful for [block fields](https://payloadcms.com/docs/field
   ]
 }
 ```
+
+Example query:
+
+```graphql
+image_textWithImage: asset(
+  relationships: { eq: "global.textWithImage.image.id" }
+) {
+  alt
+  gatsbyImage(width: 2048, quality: 85)
+}
+```
