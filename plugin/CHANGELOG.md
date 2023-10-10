@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.9.1...v0.9.2) (2023-10-10)
+
+
+### Bug Fixes
+
+* **source-nodes:** correct width/height/mimeType for imageSize ([#62](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/62)) ([43ae30f](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/43ae30feceb22aaaa214107067aac78ab8baee3e))
+
 ## [0.9.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.9.0...v0.9.1) (2023-10-10)
 
 
