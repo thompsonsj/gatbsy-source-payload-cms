@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.9.0...v0.9.1) (2023-10-10)
+
+
+### Bug Fixes
+
+* **source-nodes:** ensure height and width are integers ([#60](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/60)) ([cf33758](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/cf33758ef26e3745596d3f6495784e3a61814f1e))
+
 ## [0.9.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.8.0...v0.9.0) (2023-08-04)
 
 
