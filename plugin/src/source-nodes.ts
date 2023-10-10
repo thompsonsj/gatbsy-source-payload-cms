@@ -4,7 +4,7 @@ import type { IPluginOptionsInternal } from "./types"
 import { CACHE_KEYS, NODE_TYPES } from "./constants"
 import { createAxiosInstance } from "./axios-instance"
 import { fetchEntity, fetchEntities } from "./fetch"
-import { normalizeGlobals, payloadImageUrl } from "./utils"
+import { normalizeGlobals, payloadImage, payloadImageUrl } from "./utils"
 import { gatsbyNodeTypeName, documentRelationships } from "./utils"
 import { createRemoteFileNode } from "gatsby-source-filesystem"
 import { get, isString, pickBy } from "lodash"
@@ -286,6 +286,7 @@ export async function createLocalFileNode(
 export function createAssetNode(context: SourceNodesArgs, data: any, relationshipIds?: { [key: string]: string }) {
   const id = context.createNodeId(`${NODE_TYPES.Asset}-${data.url}`)
   const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
+  const image = payloadImage(data, data.payloadImageSize) 
   const url = encodeURI(payloadImageUrl(data, data.payloadImageSize, baseUrl)) as string
   const relationships: Array<string> = Object.keys(
     pickBy(relationshipIds, (value) => {
@@ -309,13 +310,13 @@ export function createAssetNode(context: SourceNodesArgs, data: any, relationshi
      * @see https://github.com/nodeca/probe-image-size
      * For the sake of this demo, it can be hardcoded since all images are JPGs
      */
-    mimeType: data.mimeType,
+    mimeType: image.mimeType,
     filename: url,
     /**
      * If you don't know the width and height of the image, use: https://github.com/nodeca/probe-image-size
      */
-    width: Math.round(data.width),
-    height: Math.round(data.height),
+    width: Math.round(image.width),
+    height: Math.round(image.height),
     // placeholderUrl: `${data.url}&w=%width%&h=%height%`,
     relationships,
     alt: data.alt || ``,
