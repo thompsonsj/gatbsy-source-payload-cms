@@ -314,8 +314,8 @@ export function createAssetNode(context: SourceNodesArgs, data: any, relationshi
     /**
      * If you don't know the width and height of the image, use: https://github.com/nodeca/probe-image-size
      */
-    width: data.width,
-    height: data.height,
+    width: Math.round(data.width),
+    height: Math.round(data.height),
     // placeholderUrl: `${data.url}&w=%width%&h=%height%`,
     relationships,
     alt: data.alt || ``,
