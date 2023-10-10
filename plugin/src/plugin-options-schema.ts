@@ -70,8 +70,11 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     nodePrefix: Joi.string(),
     // Optional. Map Payload locales to different strings in the resulting nodes.
     nodeTransform: Joi.object(),
-    // Optional. Create local file nodes for upload collections.
-    localFiles: Joi.boolean(),
+    // Optional. Create local file nodes for upload collections. Pass upload collection slugs to restrict file node creation by collection.
+    localFiles: Joi.alternatives(
+      Joi.boolean(),
+      Joi.array().items(Joi.string()),
+    ),
     // Optional. Create Gatsby Image CDN asset nodes for upload collections.
     imageCdn: Joi.boolean(),
     /** A base URL for constructing imageUrls. Required for `localFiles`. */
