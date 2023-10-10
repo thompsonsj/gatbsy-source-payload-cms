@@ -7,7 +7,7 @@ import { fetchEntity, fetchEntities } from "./fetch"
 import { normalizeGlobals, payloadImageUrl } from "./utils"
 import { gatsbyNodeTypeName, documentRelationships } from "./utils"
 import { createRemoteFileNode } from "gatsby-source-filesystem"
-import { get, isString, pickBy } from "lodash"
+import { get, isArray, isString, pickBy } from "lodash"
 import { normalizeCollections } from "./utils"
 
 let isFirstSource = true
@@ -171,9 +171,9 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
 
   for (const result of uploadResults) {
     for (const upload of result) {
-      let imageCdnId
-      if (pluginOptions.localFiles) {
-        createLocalFileNode(context, upload, relationshipIds)
+      let localFileId, imageCdnId
+      if (pluginOptions.localFiles === true || (isArray(pluginOptions.localFiles) && pluginOptions.localFiles.includes(upload.gatsbyNodeType))) {
+        localFileId = await createLocalFileNode(context, upload, relationshipIds)
       }
       if (pluginOptions.imageCdn) {
         imageCdnId = await createAssetNode(context, upload, relationshipIds)
@@ -187,6 +187,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
           }),
           data: {
             ...upload,
+            ...(localFileId && { localFile: localFileId }),
             ...(imageCdnId && { gatsbyImageCdn: imageCdnId }),
           },
         },
@@ -281,6 +282,7 @@ export async function createLocalFileNode(
       value: relationships,
     })
   }
+  return fileNode.id
 }
 
 export function createAssetNode(context: SourceNodesArgs, data: any, relationshipIds?: { [key: string]: string }) {

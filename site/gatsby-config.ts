@@ -81,7 +81,9 @@ const config: GatsbyConfig = {
       options: {
         endpoint: process.env.PAYLOAD_BASE_URL,
         retries: 3,
-        localFiles: false,
+        localFiles: [
+          'marketing-site-images'
+        ],
         imageCdn: true,
         baseUrl: process.env.PAYLOAD_CDN_URL,
         collectionTypes: [
