@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.9.2...v0.10.0) (2023-10-24)
+
+
+### Features
+
+* **pluginoptionsschema:** support locale specific params ([#64](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/64)) ([ef9d906](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/ef9d906b607101b42b59e35a3f0b41c88a221838))
+
 ## [0.9.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.9.1...v0.9.2) (2023-10-10)
 
 
