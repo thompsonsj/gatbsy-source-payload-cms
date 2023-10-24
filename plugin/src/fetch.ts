@@ -7,16 +7,23 @@
  * * If locales are defined for a global/collection, return all localized entities and add a `locale` key.
  */
 import qs from "qs"
-import { flattenDeep, isEmpty, isNumber } from "lodash"
+import { flattenDeep, isEmpty, isNumber, isObject, isString } from "lodash"
 import { formatEntity } from "./format-entity"
 import { fetchDataMessage } from "./utils"
+
+type LocaleString = string
+
+type LocaleObject = {
+  locale: string,
+  params: { [key: string]: unknown }
+}
 
 export type CollectionOptions = {
   endpoint: string
   /** `type` is set on the returned entity for Gatsby to use when creating nodes.  */
   type: string
   /** If locales are set, return an array of entities each with an additional `locale` key. */
-  locales?: Array<string>
+  locales?: Array<LocaleString> | Array<LocaleObject>
   params?: { [key: string]: unknown }
   limit?: number
   imageSize?: string
@@ -59,18 +66,20 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
      */
     if (locales.length > 0) {
       const localizationsPromises = locales.map(async (locale) => {
+        const localeString = isString(locale) ? locale : locale.locale
         const { data: localizationResponse } = await axiosInstance({
           ...options,
           params: {
             ...params,
             fallbackLocale,
-            locale,
+            locale: localeString,
+            ...(isObject(locale) && (locale as LocaleObject).params)
           },
         })
         return formatEntity(
           {
             data: localizationResponse,
-            locale,
+            locale: localeString,
             gatsbyNodeType: query.type,
           },
           context
@@ -146,16 +155,21 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
     // Handle internationalization
     // If locales are active, always fetch page 1 - we need to rerun the query to get localizations.
     const locales = query.locales || []
-    if (locales.length > 0) {
-      pagesToGet = [1, ...pagesToGet]
-    }
+
     if (skipPagination) {
       pagesToGet = []
+    }
+    if (locales.length > 0) {
+      pagesToGet = [1, ...pagesToGet]
+      if (skipPagination) {
+        pagesToGet = [1]
+      }
     }
 
     const fallbackLocale = context.pluginOptions?.fallbackLocale
     if (locales.length > 0) {
       const localizationsPromises = locales.map(async (locale) => {
+        const localeString = isString(locale) ? locale : locale.locale
         const fetchPagesPromises = pagesToGet.map((page) => {
           return (async () => {
             const fetchOptions = {
@@ -164,9 +178,11 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
                 ...options.params,
                 page,
                 fallbackLocale,
-                locale,
+                locale: localeString,
+                ...(isObject(locale) && (locale as LocaleObject).params)
               },
             }
+            
 
             reporter.info(fetchDataMessage(fetchOptions.url, options.paramsSerializer.serialize(fetchOptions.params)))
 
@@ -180,13 +196,13 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
         })
         const results = await Promise.all(fetchPagesPromises)
 
-        return [...data, ...flattenDeep(results)]
+        return flattenDeep(results)
           .map((entry) =>
             formatEntity(
               {
                 data: entry,
                 gatsbyNodeType: query.type,
-                locale,
+                locale: localeString,
                 ...(query.imageSize && { payloadImageSize: query.imageSize }),
               },
               context

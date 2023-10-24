@@ -19,7 +19,15 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
         Joi.string(),
         Joi.object({
           slug: Joi.string(),
-          locales: Joi.array().items(Joi.string()),
+          locales: Joi.alternatives(
+            // pass a simple array of locale strings...
+            Joi.array().items(Joi.string()),
+            // ...or pass an object that permits custom params per locale
+            Joi.array().items(Joi.object().keys({
+              locale: Joi.string(),
+              params: Joi.object(),
+            })),
+          ),
           params: Joi.object(),
           /** Override limit in query params and disable paginated query */
           limit: Joi.number(),
@@ -33,7 +41,15 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
         Joi.string(),
         Joi.object({
           slug: Joi.string(),
-          locales: Joi.array().items(Joi.string()),
+          locales: Joi.alternatives(
+            // pass a simple array of locale strings...
+            Joi.array().items(Joi.string()),
+            // ...or pass an object that permits custom params per locale
+            Joi.array().items(Joi.object().keys({
+              locale: Joi.string(),
+              params: Joi.object(),
+            })),
+          ),
           params: Joi.object(),
           /** Override limit in query params and disable paginated query */
           limit: Joi.number(),
@@ -50,7 +66,15 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
         Joi.string(),
         Joi.object({
           slug: Joi.string(),
-          locales: Joi.array().items(Joi.string()),
+          locales: Joi.alternatives(
+            // pass a simple array of locale strings...
+            Joi.array().items(Joi.string()),
+            // ...or pass an object that permits custom params per locale
+            Joi.array().items(Joi.object().keys({
+              locale: Joi.string(),
+              params: Joi.object(),
+            })),
+          ),
           params: Joi.object(),
           /** Override limit in query params and disable paginated query */
           limit: Joi.number(),
