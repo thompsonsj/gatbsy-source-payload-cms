@@ -86,19 +86,6 @@ const config: GatsbyConfig = {
         baseUrl: process.env.PAYLOAD_CDN_URL,
         collectionTypes: [
           {
-            slug: `events`,
-            ...commonParams,
-          },
-          {
-            slug: `landing-pages`,
-            ...commonParams,
-          },
-          {
-            slug: `policies`,
-            locales: payloadLocales,
-            ...globalParams,
-          },
-          {
             slug: `testimonials`,
             ...commonParams,
           },
@@ -107,15 +94,22 @@ const config: GatsbyConfig = {
             slug: `logos`,
             ...commonParams,
           },
+          {
+            slug: `content-hub-articles`,
+            locales: payloadLocales.map(locale => {
+              return {
+                locale,
+                params: {
+                  [`where[locales][equals]`]: locale,
+                },
+              }
+            }),
+            ...commonParams,
+          },
         ],
         globalTypes: [
           { slug: `customers`, locales: payloadLocales, ...globalParams, apiPath: `globals/customers/icu` },
-          { slug: `enterprise`, locales: payloadLocales, ...globalParams },
-          { slug: `careers`, locales: payloadLocales, ...globalParams },
-          { slug: `statistics`, locales: payloadLocales, ...globalParams },
-          { slug: `small-midsize`, locales: payloadLocales, ...globalParams },
           { slug: `pricing`, locales: payloadLocales, ...globalParams },
-          { slug: `ats`, locales: payloadLocales, ...globalParams },
         ],
         uploadTypes: [
           { slug: `logo-images`, ...commonParams, imageSize: `logo` },
