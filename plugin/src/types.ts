@@ -16,15 +16,23 @@ export interface IPayloadGlobalApiResponse extends IPayloadApiResponse {
   globalType: string
 }
 
+export type LocaleString = string
+
+export type LocaleObject = {
+  locale: string,
+  params: { [key: string]: unknown }
+}
+
 export type NodeBuilderInput =
   | { type: typeof NODE_TYPES.Author; data: IAuthorInput }
   | { type: string; data: IPayloadGlobalApiResponse }
 
 export interface ICollectionTypeObject {
   slug: string
-  locales?: Array<string>
+  locales?: Array<LocaleString> | Array<LocaleObject>
   params?: { [key: string]: string }
   limit?: number
+  repopulate?: boolean
 }
 
 export interface IUploadTypeObject extends ICollectionTypeObject {
