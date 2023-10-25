@@ -105,6 +105,7 @@ const config: GatsbyConfig = {
               }
             }),
             ...commonParams,
+            repopulate: true,
           },
         ],
         globalTypes: [

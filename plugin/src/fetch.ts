@@ -11,12 +11,7 @@ import { flattenDeep, isEmpty, isNumber, isObject, isString } from "lodash"
 import { formatEntity } from "./format-entity"
 import { fetchDataMessage } from "./utils"
 
-type LocaleString = string
-
-type LocaleObject = {
-  locale: string,
-  params: { [key: string]: unknown }
-}
+import { type LocaleObject, type LocaleString } from "./types"
 
 export type CollectionOptions = {
   endpoint: string
@@ -27,6 +22,7 @@ export type CollectionOptions = {
   params?: { [key: string]: unknown }
   limit?: number
   imageSize?: string
+  repopulate?: boolean
 }
 
 export const fetchEntity = async (query: CollectionOptions, context) => {
@@ -118,6 +114,8 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
 
   const skipPagination = isNumber(query.limit)
 
+  const repopulate = query.repopulate || false
+
   /** @type AxiosRequestConfig */
   const options = {
     method: `GET`,
@@ -183,7 +181,6 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
               },
             }
             
-
             reporter.info(fetchDataMessage(fetchOptions.url, options.paramsSerializer.serialize(fetchOptions.params)))
 
             try {
@@ -196,7 +193,51 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
         })
         const results = await Promise.all(fetchPagesPromises)
 
-        return flattenDeep(results)
+        if (!repopulate) {
+          return flattenDeep(results)
+          .map((entry) =>
+            formatEntity(
+              {
+                data: entry,
+                gatsbyNodeType: query.type,
+                locale: localeString,
+                ...(query.imageSize && { payloadImageSize: query.imageSize }),
+              },
+              context
+            )
+          )
+          .filter((entity): any => !isEmpty(entity))
+        }
+
+        // repopulate results
+        const fetchOptions = {
+          ...options,
+          params: {
+            ...options.params,
+            fallbackLocale,
+            locale: localeString,
+            ...(isObject(locale) && (locale as LocaleObject).params)
+          },
+        }
+        
+        const articlePromises = flattenDeep(results).map((doc) => {
+          return (async () => {
+            const options = {
+              ...fetchOptions,
+              url: `${fetchOptions.url}/${doc.id}`,
+            }
+            try {
+              const data = await axiosInstance(options)
+              return data.data
+            } catch (error) {
+              reporter.panic(`Failed to fetch data from Payload ${options.url}`, error)
+            }
+          })()
+        })
+
+        const repopulatedResults = await Promise.all(articlePromises)
+
+        return flattenDeep(repopulatedResults)
           .map((entry) =>
             formatEntity(
               {
