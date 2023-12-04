@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.11.0...v0.12.0) (2023-12-04)
+
+
+### Features
+
+* **payload-plugin:** add ([#70](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/70)) ([a2464ae](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/a2464ae55e8f00b2226a5037d7a536358d2b53e8))
+
 ## [0.11.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.10.0...v0.11.0) (2023-10-25)
 
 
