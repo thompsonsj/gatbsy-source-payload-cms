@@ -18,3 +18,8 @@ jobs:
           release-type: node
           package-name: release-please-action
           path: plugin
+      - uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: node
+          package-name: release-please-action
+          path: payload-plugin
