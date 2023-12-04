@@ -1,7 +1,7 @@
 {
   "name": "payload-plugin-gatsby-source",
   "description": "Expose GraphQL types for Gatsby installations using a custom endpoint.",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "license": "MIT",
   "main": "./dist/index.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "payload": "^2"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "@graphql-tools/schema": "^10.0.2",
