@@ -88,6 +88,8 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     ),
     // Optional. Access token. Use if your API is protected.
     accessToken: Joi.string(),
+    // Optional. User slug. Use if your API is protected.
+    accessUserSlug: Joi.string(),
     // Optional. Throttle parallel requests.
     maxParallelRequests: Joi.number(),
     // Optional. Retry requests using https://www.npmjs.com/package/axios-retry.
