@@ -44,7 +44,7 @@ More options:
   options: {
     endpoint: `https://yourapp.payload.app/api/`,
     accessToken: `<your-payload-cms-api-key>`,
-    accessUserSlug: `your-payload-cms-api-user-slug`,
+    accessUserSlug: `<your-payload-cms-api-user-slug>`,
     imageCdn: true,
     localFiles: false,
     collectionTypes: [
