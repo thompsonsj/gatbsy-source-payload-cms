@@ -36,12 +36,13 @@ const throttlingInterceptors = (axiosInstance, maxParallelRequests) => {
 }
 
 export const createAxiosInstance = (pluginConfig) => {
-  const { maxParallelRequests = Number.POSITIVE_INFINITY, accessToken, accessUserSlug, apiURL } = pluginConfig
+  const { maxParallelRequests = Number.POSITIVE_INFINITY, accessToken, accessCollectionSlug, apiURL } = pluginConfig
 
   const headers: { [key: string]: string } = {}
 
-  if (accessToken && accessUserSlug) {
-    headers.authorization = `${accessUserSlug} API-Key ${accessToken}`
+  if (accessToken) {
+    console.log(`${accessCollectionSlug || 'users'} API-Key ${accessToken}`)
+    headers.Authorization = `${accessCollectionSlug || 'users'} API-Key ${accessToken}`
   }
 
   const instance = axios.create({
