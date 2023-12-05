@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.12.0...v0.12.1) (2023-12-05)
+
+
+### Bug Fixes
+
+* api key support ([#75](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/75)) ([9ef33fd](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/9ef33fd0c520c60c03867639e40da7d750ed8280))
+
 ## [0.12.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.11.0...v0.12.0) (2023-12-04)
 
 
