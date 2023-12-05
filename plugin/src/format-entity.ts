@@ -14,6 +14,9 @@ export const formatEntity = ({ data, locale, gatsbyNodeType, payloadImageSize }:
     ...(locale && { locale: locale }),
     payloadImageSize,
   }
+  if (!context.pluginOptions.nodeTransform) {
+    return res
+  }
   const transformedRes: { [key: string]: any } = {}
   Object.keys(res).forEach((value) => {
     if (isFunction(context.pluginOptions.nodeTransform[value])) {
