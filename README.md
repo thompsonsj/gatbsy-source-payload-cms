@@ -44,6 +44,7 @@ More options:
   options: {
     endpoint: `https://yourapp.payload.app/api/`,
     accessToken: `<your-payload-cms-api-key>`,
+    accessUserSlug: `your-payload-cms-api-user-slug`,
     imageCdn: true,
     localFiles: false,
     collectionTypes: [
@@ -60,6 +61,8 @@ More options:
   },
 },
 ```
+
+Authorization is based on API keys. See [Authenticating via API Key | Authentication Config | Payload CMS](https://payloadcms.com/docs/authentication/config#api-keys).
 
 ## Points to note
 
