@@ -36,7 +36,24 @@ Simple config:
 },
 ```
 
-More options:
+### Options
+
+#### Required
+
+| Option | Example value | Description |
+| - | - | - |
+| `endpoint` | `https://yourapp.payload.app/api/` | Endpoint to the API for your Payload CMS installation. |
+
+#### Optional
+
+| Option | Example value | Description |
+| - | - | - |
+| `accessToken` | `44289e4c-55a7-4f67-de6a-e5d9423e595e` | API key. See [Authenticating via API Key - Payload CMS](https://payloadcms.com/docs/authentication/config#api-keys). |
+| `accessCollectionSlug` | `users` | Collection slug for API key enabled collection. See [Authenticating via API Key - Payload CMS](https://payloadcms.com/docs/authentication/config#api-keys). If blank, will default to `users` |
+| `imageCdn` | `false` | Adds a `gatsbyImageCdn` field to upload type nodes. See Netlify docs at [Gatsby Image CDN on Netlify](https://github.com/netlify/netlify-plugin-gatsby/blob/main/docs/image-cdn.md) |
+| `localFiles` | `false` | Download files in upload type nodes and create file nodes. Uses [createRemoteFileNode - gatsby-source-filesystem](https://www.gatsbyjs.com/plugins/gatsby-source-filesystem/#createremotefilenode). |
+
+#### Example
 
 ```ts
 {
@@ -62,12 +79,9 @@ More options:
 },
 ```
 
-Authorization is based on API keys. See [Authenticating via API Key | Authentication Config | Payload CMS](https://payloadcms.com/docs/authentication/config#api-keys).
-
 ## Points to note
 
 - `gatsbyNodeType` is a reserved key for API responses. If you have a Payload field with this name, it will be overwritten.
-- If using Gatsby Image CDN, a `gatsbyImageCdn` field will be added to upload type nodes.
 
 ## Gatsby Image CDN support
 

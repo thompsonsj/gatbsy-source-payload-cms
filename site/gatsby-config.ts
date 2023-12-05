@@ -77,9 +77,11 @@ const config: GatsbyConfig = {
     // Load the plugin with its options
     {
       resolve: `gatsby-source-payload-cms`,
+
       // You can pass any serializable options to the plugin
       options: {
         endpoint: process.env.PAYLOAD_BASE_URL,
+        accessToken: process.env.PAYLOAD_CMS_ACCESS_TOKEN,
         retries: 3,
         localFiles: false,
         imageCdn: true,
