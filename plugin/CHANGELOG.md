@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.12.1...v0.12.2) (2023-12-05)
+
+
+### Bug Fixes
+
+* **format-entity:** allow no nodeTransform option ([#77](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/77)) ([7751b53](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/7751b53b0c5cf2fc8662fe8a81256dc6b4f49564))
+
 ## [0.12.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.12.0...v0.12.1) (2023-12-05)
 
 
