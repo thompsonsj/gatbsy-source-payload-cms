@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.3](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.12.2...v0.12.3) (2023-12-06)
+
+
+### Bug Fixes
+
+* **axios-instance:** api key console log ([#80](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/80)) ([c590587](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/c590587e7d38899fe9a26cc9e618fe589007e99d))
+
 ## [0.12.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.12.1...v0.12.2) (2023-12-05)
 
 
