@@ -41,7 +41,6 @@ export const createAxiosInstance = (pluginConfig) => {
   const headers: { [key: string]: string } = {}
 
   if (accessToken) {
-    console.log(`${accessCollectionSlug || 'users'} API-Key ${accessToken}`)
     headers.Authorization = `${accessCollectionSlug || 'users'} API-Key ${accessToken}`
   }
 
