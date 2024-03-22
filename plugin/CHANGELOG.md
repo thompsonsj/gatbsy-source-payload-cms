@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.12.3...v0.13.0) (2024-03-22)
+
+
+### Features
+
+* **collectiontypes:** apiPath option ([#82](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/82)) ([5065f3c](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/5065f3c39d7a8a106432dd46d6093bb0eedf6330))
+
 ## [0.12.3](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.12.2...v0.12.3) (2023-12-06)
 
 
