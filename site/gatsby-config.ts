@@ -91,10 +91,14 @@ const config: GatsbyConfig = {
             slug: `testimonials`,
             ...commonParams,
           },
-          { slug: `localized-testimonials`, locales: payloadLocales, ...commonParams },
           {
             slug: `logos`,
             ...commonParams,
+          },
+          {
+            slug: `landing-pages`,
+            ...commonParams,
+            apiPath: `landing-pages/icu`,
           },
           {
             slug: `content-hub-articles`,
