@@ -113,11 +113,14 @@ const normalizeCollectionString = (collectionType: string, endpoint: string) => 
   type: collectionType,
 })
 
-const normalizeCollectionObject = (collectionType: ICollectionTypeObject, endpoint: string) => ({
-  endpoint: new URL(`${collectionType.slug}`, endpoint).href,
-  ...collectionType,
-  type: collectionType.slug,
-})
+const normalizeCollectionObject = (collectionType: ICollectionTypeObject, endpoint: string) => {
+  const urlPath = collectionType.apiPath ? collectionType.apiPath : collectionType.slug
+  return {
+  endpoint: new URL(`${urlPath}`, endpoint).href,
+    ...collectionType,
+    type: collectionType.slug,
+  }
+}
 
 const normalizeGlobal = (globalType: string | IGlobalTypeObject, endpoint: string) => {
   if (isString(globalType)) {

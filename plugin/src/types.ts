@@ -33,6 +33,7 @@ export interface ICollectionTypeObject {
   params?: { [key: string]: string }
   limit?: number
   repopulate?: boolean
+  apiPath?: string
 }
 
 export interface IUploadTypeObject extends ICollectionTypeObject {
