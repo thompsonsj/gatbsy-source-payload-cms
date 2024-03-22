@@ -36,15 +36,15 @@ Simple config:
 },
 ```
 
-### Options
+## Options
 
-#### Required
+**Required**
 
 | Option | Example value | Description |
 | - | - | - |
 | `endpoint` | `https://yourapp.payload.app/api/` | Endpoint to the API for your Payload CMS installation. |
 
-#### Optional
+**Optional**
 
 | Option | Example value | Description |
 | - | - | - |
@@ -52,8 +52,10 @@ Simple config:
 | `accessCollectionSlug` | `users` | Collection slug for API key enabled collection. See [Authenticating via API Key - Payload CMS](https://payloadcms.com/docs/authentication/config#api-keys). If blank, will default to `users` |
 | `imageCdn` | `false` | Adds a `gatsbyImageCdn` field to upload type nodes. See Netlify docs at [Gatsby Image CDN on Netlify](https://github.com/netlify/netlify-plugin-gatsby/blob/main/docs/image-cdn.md) |
 | `localFiles` | `false` | Download files in upload type nodes and create file nodes. Uses [createRemoteFileNode - gatsby-source-filesystem](https://www.gatsbyjs.com/plugins/gatsby-source-filesystem/#createremotefilenode). |
+| `collectionTypes` | `['posts']` | Specifiy collections to retrive along with any collection-specific options. [More](#collection-types). |
+| `globalTypes` | `['nav']` | Specifiy globals to retrive along with any global-specific options. [More](#global-types). |
 
-#### Example
+### Example
 
 ```ts
 {
@@ -78,6 +80,61 @@ Simple config:
   },
 },
 ```
+
+### Collection Types
+
+Specify collections to retrieve in the `collectionTypes` option.
+
+Use `string` values to use default API query parameters: `depth=10&limit=1000`.
+
+```ts
+{
+  // ...
+  collectionTypes: [
+    'posts',
+    'tags'
+  ]
+  // ...
+}
+```
+
+Use `object` values for further control over how the collection is retrieved.
+
+| Option | Example value | Description |
+| - | - | - |
+| `slug` | `posts` | Collection slug. |
+| `locales` | `['en', 'fr_FR']` | Specify/Restrict locales for collection documents. |
+| `params` | `{ depth: 4 }` | Pass query parameters to REST API call. |
+| `limit` | `100` | Limit number of documents retrieved. |
+| `repopulate` | `false` | Run a single document query for every document retrieved. |
+| `apiPath` | `posts/icu` | Custom API path. Useful when using [custom endpoints](https://payloadcms.com/docs/rest-api/overview#custom-endpoints). |
+
+### Global Types
+
+Specify collections to retrieve in the `globalTypes` option.
+
+Use `string` values to use default API query parameters: `depth=10&limit=1000`.
+
+```ts
+{
+  // ...
+  globalTypes: [
+    'nav',
+    'footer'
+  ]
+  // ...
+}
+```
+
+Use `object` values for further control over how the global is retrieved.
+
+| Option | Example value | Description |
+| - | - | - |
+| `slug` | `posts` | Global slug. |
+| `locales` | `['en', 'fr_FR']` | Specify/Restrict locales for the global. |
+| `params` | `{ depth: 4 }` | Pass query parameters to REST API call. |
+| `apiPath` | `header/icu` | Custom API path. Useful when using [custom endpoints](https://payloadcms.com/docs/rest-api/overview#custom-endpoints). |
+
 
 ## Points to note
 

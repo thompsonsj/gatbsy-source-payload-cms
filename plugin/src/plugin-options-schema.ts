@@ -34,6 +34,8 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
           /** Repopulate results with a query on each result. Use with caution - can significantly increase the number of API calls. Included to get around an issue where the depth parameter is not always respected on paginated queries. */
           /* Currently only supported for queries with locales */
           repopulate: Joi.boolean(),
+          /** Defaults to `/:slug` */
+          apiPath: Joi.string(),
         })
       )
     ),
