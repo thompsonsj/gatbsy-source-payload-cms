@@ -1,5 +1,5 @@
 import type { GatsbyConfig } from "gatsby"
-import type { IPluginOptions } from "plugin"
+import type { IPluginOptions } from "../plugin/src/types"
 import * as dotenv from "dotenv" // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config()
 import { isArray, isEmpty, isPlainObject } from "lodash"
@@ -57,7 +57,7 @@ const API_CALL_LIMIT = `true`
 
 const commonParams = {
   params: {
-    depth: 10,
+    depth: `10`,
   },
   ...(API_CALL_LIMIT === `true` && { limit: 1000 }),
 }
@@ -87,6 +87,11 @@ const config: GatsbyConfig = {
         imageCdn: true,
         baseUrl: process.env.PAYLOAD_CDN_URL,
         collectionTypes: [
+          {
+            slug: `events`,
+            locales: payloadLocales,
+            ...commonParams,
+          },
           {
             slug: `testimonials`,
             ...commonParams,
@@ -124,13 +129,14 @@ const config: GatsbyConfig = {
           { slug: `media`, ...commonParams },
         ],
         fallbackLocale: `en`,
-        nodeTransform: {
-          locale: (locale) => (isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale),
-          locales: (locales) =>
-            isArray(locales) &&
-            locales.map((locale) =>
-              isPlainObject(localeMap) && !isEmpty(localeMap[locale]) ? localeMap[locale] : locale
-            ),
+        nodeTransform: (data) => {
+          if ('locale' in data) {
+            return {
+              ...data,
+              gatsbyNodeLocale: data.locale,
+            }
+          }
+          return data
         },
         // schemaCustomizations: allSchemaCustomizations,
       } satisfies IPluginOptions,

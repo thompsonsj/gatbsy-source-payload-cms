@@ -100,7 +100,7 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     // Optional. Add a prefix to Gatsby nodes. Default: Payload.
     nodePrefix: Joi.string(),
     // Optional. Map Payload locales to different strings in the resulting nodes.
-    nodeTransform: Joi.object(),
+    nodeTransform: Joi.function(),
     // Optional. Create local file nodes for upload collections.
     localFiles: Joi.boolean(),
     // Optional. Create Gatsby Image CDN asset nodes for upload collections.
