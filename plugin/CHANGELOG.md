@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.13.0...v1.0.0) (2024-04-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **formatentity:** node transform fn runs on whole data ([#84](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/84))
+
+### Code Refactoring
+
+* **formatentity:** node transform fn runs on whole data ([#84](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/84)) ([04090be](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/04090beed56235e02f3804c78d01bb698b49c193))
+
 ## [0.13.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.12.3...v0.13.0) (2024-03-22)
 
 
