@@ -8,22 +8,22 @@ interface IFormatEntry {
 }
 
 export const formatEntity = ({ data, locale, gatsbyNodeType, payloadImageSize }: IFormatEntry, context?: any) => {
-  const res = {
-    ...data,
-    gatsbyNodeType,
-    ...(locale && { locale: locale }),
-    payloadImageSize,
-  }
   if (!context.pluginOptions.nodeTransform) {
-    return res
+    return addReservedProperties({data, locale, gatsbyNodeType, payloadImageSize})
   }
-  const transformedRes: { [key: string]: any } = {}
-  Object.keys(res).forEach((value) => {
-    if (isFunction(context.pluginOptions.nodeTransform[value])) {
-      transformedRes[value] = context.pluginOptions.nodeTransform[value](res[value])
-    } else {
-      transformedRes[value] = res[value]
-    }
-  })
-  return transformedRes
+  let transformedRes: { [key: string]: any } = {}
+  if (isFunction(context.pluginOptions.nodeTransform)) {
+    transformedRes = context.pluginOptions.nodeTransform(data)
+  } else {
+    transformedRes = data
+  }
+  return addReservedProperties({data: transformedRes, locale, gatsbyNodeType, payloadImageSize})
 }
+
+const addReservedProperties = ({ data, locale, gatsbyNodeType, payloadImageSize }: IFormatEntry) => ({
+  ...data,
+  id: data.id, // added to pass typing check
+  gatsbyNodeType,
+  ...(locale && { locale: locale }),
+  payloadImageSize,
+})
