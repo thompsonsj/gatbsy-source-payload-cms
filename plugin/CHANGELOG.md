@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.0...v1.0.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* **sourcenodes:** remove encoding of image urls ([#86](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/86)) ([8d1a986](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/8d1a986ada89006e131fa4aa65871a38d84d23b8))
+
 ## [1.0.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v0.13.0...v1.0.0) (2024-04-17)
 
 
