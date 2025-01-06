@@ -261,7 +261,7 @@ export async function createLocalFileNode(
   const { createNode, createNodeField } = context.actions
   const { getCache } = context
   const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
-  const url = encodeURI(payloadImageUrl(data, data.payloadImageSize, baseUrl)) as string
+  const url = payloadImageUrl(data, data.payloadImageSize, baseUrl) as string
 
   const fileNode = await createRemoteFileNode({
     url,
@@ -287,7 +287,7 @@ export function createAssetNode(context: SourceNodesArgs, data: any, relationshi
   const id = context.createNodeId(`${NODE_TYPES.Asset}-${data.url}`)
   const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
   const image = payloadImage(data, data.payloadImageSize) 
-  const url = encodeURI(payloadImageUrl(data, data.payloadImageSize, baseUrl)) as string
+  const url = payloadImageUrl(data, data.payloadImageSize, baseUrl) as string
   const relationships: Array<string> = Object.keys(
     pickBy(relationshipIds, (value) => {
       return value === data.id
