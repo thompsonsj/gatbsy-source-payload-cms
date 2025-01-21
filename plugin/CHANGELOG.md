@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.5...v1.0.6) (2025-01-21)
+
+
+### Bug Fixes
+
+* **createschemacustomization:** support empty prefix ([#96](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/96)) ([8542fa7](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/8542fa7c9bed028de2249f68da8553bfec4fbba1))
+
 ## [1.0.5](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.4...v1.0.5) (2025-01-21)
 
 
