@@ -1,9 +1,41 @@
 import dot from "dot-object"
 import fetch, { HeadersInit } from "node-fetch"
 import { get, isEmpty, isString, omitBy } from "lodash"
+import { isPlural, singular, plural } from 'pluralize'
 
 import type { ICollectionTypeObject, IGlobalTypeObject } from "./types"
-import { formatNames } from "payload"
+
+const capitalizeFirstLetter = (string: string): string =>
+  string.charAt(0).toUpperCase() + string.slice(1)
+
+const toWords = (inputString: string, joinWords = false): string => {
+  const notNullString = inputString || ''
+  const trimmedString = notNullString.trim()
+  const arrayOfStrings = trimmedString.split(/[\s-]/)
+
+  const splitStringsArray = []
+  arrayOfStrings.forEach((tempString) => {
+    if (tempString !== '') {
+      const splitWords = tempString.split(/(?=[A-Z])/).join(' ')
+      splitStringsArray.push(capitalizeFirstLetter(splitWords))
+    }
+  })
+
+  return joinWords ? splitStringsArray.join('').replace(/\s/g, '') : splitStringsArray.join(' ')
+}
+
+const formatNames = (slug: string): { plural: string; singular: string } => {
+  const words = toWords(slug, true)
+  return isPlural(slug)
+    ? {
+        plural: words,
+        singular: singular(words),
+      }
+    : {
+        plural: plural(words),
+        singular: words,
+      }
+}
 
 const headers = {
   "Content-Type": `application/json`,
