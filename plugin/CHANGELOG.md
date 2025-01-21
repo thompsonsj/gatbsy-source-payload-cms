@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.3...v1.0.4) (2025-01-21)
+
+
+### Bug Fixes
+
+* **utils:** remove unused imports ([#92](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/92)) ([b2d37f1](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/b2d37f168df67503760c66218183e92d35777157))
+
 ## [1.0.3](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.2...v1.0.3) (2025-01-21)
 
 
