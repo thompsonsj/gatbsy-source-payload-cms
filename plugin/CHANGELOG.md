@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.1...v1.0.2) (2025-01-21)
+
+
+### Bug Fixes
+
+* **pluginoptionsschema:** allow empty string nodePrefix ([#88](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/88)) ([e96f6bb](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/e96f6bb94731e40864f685de08dc531e5cd57773))
+
 ## [1.0.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.0...v1.0.1) (2025-01-06)
 
 
