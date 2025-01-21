@@ -41,11 +41,13 @@
     "gatsby": "next",
     "gatsby-plugin-utils": "next",
     "jest": "^29.6.2",
+    "payload": "latest",
     "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
   },
   "peerDependencies": {
     "gatsby": "^5.0.0",
-    "gatsby-source-filesystem": "^5.0.0"
+    "gatsby-source-filesystem": "^5.0.0",
+    "payload": "^3"
   }
 }
