@@ -80,6 +80,7 @@ const config: GatsbyConfig = {
 
       // You can pass any serializable options to the plugin
       options: {
+        nodePrefix: ``,
         endpoint: process.env.PAYLOAD_BASE_URL,
         accessToken: process.env.PAYLOAD_CMS_ACCESS_TOKEN,
         retries: 3,
