@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.4...v1.0.5) (2025-01-21)
+
+
+### Bug Fixes
+
+* **plugin:** remove payload dependency ([#94](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/94)) ([5fc7cfe](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/5fc7cfeb775fe32b42f85b6de15425a67f51e04f))
+
 ## [1.0.4](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.3...v1.0.4) (2025-01-21)
 
 
