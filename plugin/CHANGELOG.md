@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.2...v1.0.3) (2025-01-21)
+
+
+### Bug Fixes
+
+* **utils:** generate gatsby node name using Payload fn ([#90](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/90)) ([b26e911](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/b26e911789db31e7998dbb792bcf296ca93f8c76))
+
 ## [1.0.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.1...v1.0.2) (2025-01-21)
 
 
