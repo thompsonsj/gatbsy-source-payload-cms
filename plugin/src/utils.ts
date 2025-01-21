@@ -3,6 +3,7 @@ import fetch, { HeadersInit } from "node-fetch"
 import { camelCase, get, isEmpty, isString, omitBy, upperFirst } from "lodash"
 
 import type { ICollectionTypeObject, IGlobalTypeObject } from "./types"
+import { formatNames } from "payload"
 
 const headers = {
   "Content-Type": `application/json`,
@@ -33,8 +34,12 @@ export const fetchDataMessage = (url: string, serializedParams?: string): string
   return message.join(` `)
 }
 
-export const gatsbyNodeTypeName = ({ payloadSlug, prefix = `Payload` }: { payloadSlug: string; prefix?: string }) =>
-  `${prefix}${upperFirst(camelCase(payloadSlug))}`
+export const gatsbyNodeTypeName = ({ payloadSlug, prefix = `Payload` }: { payloadSlug: string; prefix?: string }) => {
+  const fromSlug = formatNames(payloadSlug)
+  const singularName = fromSlug.singular
+  return `${prefix}${singularName}`
+}
+  
 
 /**
  * Get doc relationships
