@@ -1,6 +1,6 @@
 import dot from "dot-object"
 import fetch, { HeadersInit } from "node-fetch"
-import { camelCase, get, isEmpty, isString, omitBy, upperFirst } from "lodash"
+import { get, isEmpty, isString, omitBy } from "lodash"
 
 import type { ICollectionTypeObject, IGlobalTypeObject } from "./types"
 import { formatNames } from "payload"
