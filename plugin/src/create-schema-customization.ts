@@ -36,7 +36,7 @@ export const createSchemaCustomization: GatsbyNode[`createSchemaCustomization`] 
     normalizedUploadTypes.forEach((uploadType) => {
       const type = gatsbyNodeTypeName({
         payloadSlug: uploadType.type,
-        ...(isString(pluginOptions.prefix) && { prefix: pluginOptions.prefix as string }),
+        ...(isString(pluginOptions.nodePrefix) && { prefix: pluginOptions.nodePrefix as string }),
       })
       console.log(type)
       schemaCustomizations.push(`
