@@ -143,9 +143,11 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
         },
       })
       // Populate relationshipIds
-      relationshipIds = {
-        ...documentRelationships(collection, [collection.gatsbyNodeType, collection.id].join(`.`)),
-        ...relationshipIds,
+      if (pluginOptions.localFiles || pluginOptions.imageCdn) {
+        relationshipIds = {
+          ...documentRelationships(collection, [collection.gatsbyNodeType, collection.id].join(`.`)),
+          ...relationshipIds,
+        }
       }
     }
   }
@@ -162,9 +164,11 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
         },
       })
       // Populate relationshipIds
-      relationshipIds = {
-        ...documentRelationships(global, global.gatsbyNodeType),
-        ...relationshipIds,
+      if (pluginOptions.localFiles || pluginOptions.imageCdn) {
+        relationshipIds = {
+          ...documentRelationships(global, global.gatsbyNodeType),
+          ...relationshipIds,
+        }
       }
     }
   }
@@ -286,7 +290,7 @@ export async function createLocalFileNode(
 export function createAssetNode(context: SourceNodesArgs, data: any, relationshipIds?: { [key: string]: string }) {
   const id = context.createNodeId(`${NODE_TYPES.Asset}-${data.url}`)
   const baseUrl = (get(context, `pluginOptions.baseUrl`, ``) as string).replace(/\/$/, ``)
-  const image = payloadImage(data, data.payloadImageSize) 
+  const image = payloadImage(data, data.payloadImageSize)
   const url = payloadImageUrl(data, data.payloadImageSize, baseUrl) as string
   const relationships: Array<string> = Object.keys(
     pickBy(relationshipIds, (value) => {
