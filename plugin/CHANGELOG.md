@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.6...v1.1.0) (2025-02-26)
+
+
+### Features
+
+* **plugin:** add relationships only when required ([#100](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/100)) ([e26bc4e](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/e26bc4e5ead66a2920181965dcc3246691f5567f))
+
 ## [1.0.6](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.5...v1.0.6) (2025-01-21)
 
 
