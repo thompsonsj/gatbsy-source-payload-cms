@@ -46,7 +46,7 @@ export interface IUploadTypeObject extends ICollectionTypeObject {
 
 export interface IGlobalTypeObject extends ICollectionTypeObject {
   slug: string
-  locales?: Array<string>
+  locales?: Array<LocaleString> | Array<LocaleObject>
   params?: { [key: string]: string }
   limit?: number
   apiPath?: string
