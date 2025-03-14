@@ -137,6 +137,28 @@ Specify/Restrict locales for collection documents.
 }
 ```
 
+Define locales as a function in order to pass customised query parameters to the REST API call for each locale.
+
+```ts
+{
+  // ...
+  collectionTypes: [
+    {
+      slug: 'posts',
+      locales: payloadLocales.map((locale) => {
+        return {
+          locale,
+          params: {
+            [`where[locales][contains]`]: locale,
+          },
+        };
+      }),
+    },
+  ]
+  // ...
+}
+```
+
 ### `params`
 
 Pass query parameters to REST API call.
@@ -273,6 +295,28 @@ Specify/Restrict locales for the global.
     {
       slug: 'nav',
       locales: ['en', 'fr_FR'],
+    },
+  ]
+  // ...
+}
+```
+
+Define locales as a function in order to pass customised query parameters to the REST API call for each locale.
+
+```ts
+{
+  // ...
+  globalTypes: [
+    {
+      slug: 'nav',
+      locales: locales.map((locale) => ({
+        locale,
+        ...(locale !== `en` && {
+          params: {
+            draft: `true`,
+          }
+        }),
+      }))
     },
   ]
   // ...
