@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.1.0...v1.1.1) (2025-03-14)
+
+
+### Bug Fixes
+
+* **types:** collection/global locale function option ([#103](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/103)) ([2252635](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/22526354ae65137b7fe88bcfc45dbed167a6be36))
+
 ## [1.1.0](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.0.6...v1.1.0) (2025-02-26)
 
 
