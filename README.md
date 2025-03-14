@@ -101,14 +101,130 @@ Use `string` values to use default API query parameters: `depth=10&limit=1000`.
 
 Use `object` values for further control over how the collection is retrieved.
 
-| Option | Example value | Description |
-| - | - | - |
-| `slug` | `posts` | Collection slug. |
-| `locales` | `['en', 'fr_FR']` | Specify/Restrict locales for collection documents. |
-| `params` | `{ depth: 4 }` | Pass query parameters to REST API call. |
-| `limit` | `100` | Limit number of documents retrieved. |
-| `repopulate` | `false` | Run a single document query for every document retrieved. |
-| `apiPath` | `posts/icu` | Custom API path. Useful when using [custom endpoints](https://payloadcms.com/docs/rest-api/overview#custom-endpoints). |
+#### `slug` (required)
+
+Define the collection slug as an object key/value in order to pass additional options.
+
+```ts
+{
+  // ...
+  collectionTypes: [
+    {
+      slug: 'posts',
+    },
+    {
+      slug: 'tags',
+    }
+  ]
+  // ...
+}
+```
+
+### `locales`
+
+Specify/Restrict locales for collection documents.
+
+```ts
+{
+  // ...
+  collectionTypes: [
+    {
+      slug: 'posts',
+      locales: ['en', 'fr_FR'],
+    },
+  ]
+  // ...
+}
+```
+
+### `params`
+
+Pass query parameters to REST API call.
+
+```ts
+{
+  // ...
+  collectionTypes: [
+    {
+      slug: 'posts',
+      params: {
+        depth: 4,
+      },
+    },
+  ]
+  // ...
+}
+```
+
+See [REST API | Payload CMS](https://payloadcms.com/docs/rest-api/overview) for a list of query parameters.
+
+### `limit`
+
+Limit number of documents retrieved.
+
+```ts
+{
+  // ...
+  collectionTypes: [
+    {
+      slug: 'posts',
+      limit: 100,
+    },
+  ]
+  // ...
+}
+```
+
+### Repopulate
+
+Run a single document query for every document retrieved.
+
+```ts
+{
+  // ...
+  collectionTypes: [
+    {
+      slug: 'posts',
+      repopulate: false,
+    },
+  ]
+  // ...
+}
+```
+
+### `repopulate`
+
+Run a single document query for every document retrieved.
+
+```ts
+{
+  // ...
+  collectionTypes: [
+    {
+      slug: 'posts',
+      repopulate: false,
+    },
+  ]
+  // ...
+}
+```
+
+### `apiPath`
+
+Custom API path. Useful when using [custom endpoints](https://payloadcms.com/docs/rest-api/overview#custom-endpoints).
+
+```ts
+{
+  // ...
+  collectionTypes: [
+    {
+      slug: 'posts',
+      apiPath: `posts/icu`,
+    },
+  ]
+  // ...
+}
+```
 
 ### Global Types
 
@@ -127,14 +243,75 @@ Use `string` values to use default API query parameters: `depth=10&limit=1000`.
 }
 ```
 
-Use `object` values for further control over how the global is retrieved.
+### `slug` (required)
 
-| Option | Example value | Description |
-| - | - | - |
-| `slug` | `posts` | Global slug. |
-| `locales` | `['en', 'fr_FR']` | Specify/Restrict locales for the global. |
-| `params` | `{ depth: 4 }` | Pass query parameters to REST API call. |
-| `apiPath` | `header/icu` | Custom API path. Useful when using [custom endpoints](https://payloadcms.com/docs/rest-api/overview#custom-endpoints). |
+Define the global slug as an object key value in order to pass additional options.
+
+```ts
+{
+  // ...
+  globalTypes: [
+    {
+      slug: 'nav',
+    },
+    {
+      slug: 'footer',
+    }
+  ]
+  // ...
+}
+```
+
+### `locales`
+
+Specify/Restrict locales for the global.
+
+```ts
+{
+  // ...
+  globalTypes: [
+    {
+      slug: 'nav',
+      locales: ['en', 'fr_FR'],
+    },
+  ]
+  // ...
+}
+```
+
+### `params`
+
+Pass query parameters to REST API call.
+
+```ts
+{
+  // ...
+  globalTypes: [
+    {
+      slug: 'nav',
+      depth: 4,
+    },
+  ]
+  // ...
+}
+```
+
+### `apiPath`
+
+Custom API path. Useful when using [custom endpoints](https://payloadcms.com/docs/rest-api/overview#custom-endpoints).
+
+```ts
+{
+  // ...
+  globalTypes: [
+    {
+      slug: 'nav',
+      apiPath: 'header/icu',
+    },
+  ]
+  // ...
+}
+```
 
 ### Node transform
 
