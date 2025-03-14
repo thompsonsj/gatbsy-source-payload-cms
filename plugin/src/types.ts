@@ -20,7 +20,7 @@ export type LocaleString = string
 
 export type LocaleObject = {
   locale: string,
-  params: { [key: string]: unknown }
+  params?: { [key: string]: unknown }
 }
 
 export type NodeBuilderInput =
