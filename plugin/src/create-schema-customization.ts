@@ -38,7 +38,6 @@ export const createSchemaCustomization: GatsbyNode[`createSchemaCustomization`] 
         payloadSlug: uploadType.type,
         ...(isString(pluginOptions.nodePrefix) && { prefix: pluginOptions.nodePrefix as string }),
       })
-      console.log(type)
       schemaCustomizations.push(`
         type ${type} implements Node {
           gatsbyImageCdn: Asset @link
