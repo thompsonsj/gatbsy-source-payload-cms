@@ -195,6 +195,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
 
         if (!repopulate) {
           return flattenDeep(results)
+          .filter(Boolean)
           .map((entry) =>
             formatEntity(
               {
@@ -238,6 +239,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
         const repopulatedResults = await Promise.all(articlePromises)
 
         return flattenDeep(repopulatedResults)
+          .filter(Boolean)
           .map((entry) =>
             formatEntity(
               {
@@ -280,7 +282,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
 
       const results = await Promise.all(fetchPagesPromises)
 
-      const cleanedData = [...data, ...flattenDeep(results)]
+      const cleanedData = [...data, ...flattenDeep(results).filter(Boolean)]
         .map((entry) =>
           formatEntity(
             {
