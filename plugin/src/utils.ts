@@ -119,12 +119,23 @@ export const payloadImageUrl = (
   return url ? `${removeTrailingSlash(baseUrl)}${url}` : undefined
 }
 
+/**
+ * `new URL(relativePath, base)` treats a base URL's last path segment as a
+ * "file" to be replaced unless the base ends with a slash - e.g.
+ * `new URL('posts', 'https://x/api')` resolves to `https://x/posts`, silently
+ * dropping "/api". A trailing slash on `endpoint` is easy to omit (both forms
+ * are valid, equally plausible URLs), so guarantee one here rather than
+ * relying on every caller to remember it.
+ */
+const ensureTrailingSlash = (url: string): string => (url.endsWith(`/`) ? url : `${url}/`)
+
 export const normalizeGlobals = (globalTypes: Array<string | IGlobalTypeObject> | undefined, endpoint: string) => {
   if (!globalTypes) {
     return []
   }
+  const normalizedEndpoint = ensureTrailingSlash(endpoint)
   return globalTypes.map((globalType) => {
-    return normalizeGlobal(globalType, endpoint)
+    return normalizeGlobal(globalType, normalizedEndpoint)
   })
 }
 
@@ -135,7 +146,8 @@ export const normalizeCollections = (
   if (!collectionTypes) {
     return []
   }
-  return collectionTypes.map((collectionType) => normalizeCollection(collectionType, endpoint))
+  const normalizedEndpoint = ensureTrailingSlash(endpoint)
+  return collectionTypes.map((collectionType) => normalizeCollection(collectionType, normalizedEndpoint))
 }
 
 const normalizeCollection = (collectionType: string | ICollectionTypeObject, endpoint: string) => {

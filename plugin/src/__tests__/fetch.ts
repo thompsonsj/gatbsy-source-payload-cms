@@ -78,6 +78,18 @@ describe(`fetchEntity`, () => {
 
     expect(context.reporter.panic).toHaveBeenCalledTimes(1)
   })
+
+  it(`panics gracefully on network-level errors that have no "response" at all`, async () => {
+    const context = buildContext()
+    // A real axios network error (DNS failure, connection refused, timeout) has
+    // no `.response` - only HTTP error responses do.
+    context.axiosInstance.mockRejectedValueOnce(new Error(`Network Error`))
+
+    const result = await fetchEntity({ endpoint: `http://localhost/api/home`, type: `Home` }, context)
+
+    expect(context.reporter.panic).toHaveBeenCalledTimes(1)
+    expect(result).toEqual([])
+  })
 })
 
 describe(`fetchEntities`, () => {
@@ -94,6 +106,21 @@ describe(`fetchEntities`, () => {
 
     expect(context.axiosInstance).toHaveBeenCalledTimes(3)
     expect(result.map((entity) => entity.id)).toEqual([1, 2, 3])
+  })
+
+  it(`drops null/falsy entries in the first page's own docs, not just later pages`, async () => {
+    const context = buildContext()
+    // A malformed or partially-corrupted API response could contain a null
+    // entry in `docs` (e.g. a dangling/broken relationship expansion). Only
+    // pages fetched *beyond* the first were being defended against this -
+    // the first page's own docs were passed straight through to formatEntity.
+    context.axiosInstance.mockResolvedValueOnce({
+      data: { docs: [{ id: 1 }, null, { id: 2 }], page: 1, totalPages: 1 },
+    })
+
+    const result = await fetchEntities({ endpoint: `http://localhost/api/posts`, type: `Post` }, context)
+
+    expect(result.map((entity: any) => entity.id)).toEqual([1, 2])
   })
 
   it(`does not paginate when a limit is provided`, async () => {

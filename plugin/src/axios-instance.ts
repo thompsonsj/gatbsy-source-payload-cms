@@ -42,11 +42,20 @@ export const createAxiosInstance = (pluginConfig) => {
     // Setting it can help large/wide sourcing operations avoid overwhelming the
     // origin API or the build machine, at the cost of wall-clock time — see the
     // README for the tradeoff.
-    maxParallelRequests = Number.POSITIVE_INFINITY,
+    maxParallelRequests: configuredMaxParallelRequests = Number.POSITIVE_INFINITY,
     accessToken,
     accessCollectionSlug,
     apiURL,
   } = pluginConfig
+
+  // The plugin options schema already rejects values below 1 - this is a
+  // second line of defense so a bad value can never deadlock every request
+  // waiting for a free slot that can never exist, even if schema validation
+  // is bypassed (e.g. createAxiosInstance called directly).
+  const maxParallelRequests =
+    isFinite(configuredMaxParallelRequests) && configuredMaxParallelRequests >= 1
+      ? configuredMaxParallelRequests
+      : Number.POSITIVE_INFINITY
 
   const headers: { [key: string]: string } = {}
 

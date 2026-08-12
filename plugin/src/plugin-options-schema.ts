@@ -115,7 +115,9 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
      * load; raising a collection's page size via `limit` has a similar effect
      * in the other direction.
      */
-    maxParallelRequests: Joi.number(),
+    // A value of 0 or below would deadlock the throttling interceptor - every
+    // request would wait forever for a free slot that can never exist.
+    maxParallelRequests: Joi.number().integer().min(1),
     // Optional. Retry requests using https://www.npmjs.com/package/axios-retry.
     retries: Joi.number(),
     fallbackLocale: Joi.string(),

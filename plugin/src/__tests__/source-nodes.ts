@@ -258,6 +258,56 @@ describe(`sourceNodes (main function)`, () => {
     expect((createRemoteFileNode as jest.Mock).mock.calls[0][0].url).toEqual(`/media/a.jpg`);
   });
 
+  it(`awaits createLocalFileNode before resolving, so file nodes are guaranteed to exist when sourcing finishes`, async () => {
+    // createLocalFileNode is async (it downloads a file and creates a node).
+    // If sourceNodes doesn't await it, sourceNodes can resolve before the file
+    // node exists (a race downstream schema/page-building code can lose), and
+    // a rejected download becomes an unhandled promise rejection outside
+    // Gatsby's own error handling instead of a clean, reported build failure.
+    const gatsbyApi = buildGatsbyApi();
+    (fetchEntities as jest.Mock).mockResolvedValueOnce([
+      { id: `1`, gatsbyNodeType: `headshots`, url: `/media/a.jpg` },
+    ]);
+
+    let resolveFileNode: (value: unknown) => void;
+    (createRemoteFileNode as jest.Mock).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveFileNode = resolve;
+        })
+    );
+
+    let sourceNodesResolved = false;
+    const sourceNodesPromise = callSourceNodes(gatsbyApi, {
+      ...basePluginOptions,
+      uploadTypes: [`headshots`],
+      localFiles: true,
+    }).then(() => {
+      sourceNodesResolved = true;
+    });
+
+    // Flush microtasks until the download has actually started, without ever
+    // resolving it.
+    for (let i = 0; i < 20 && (createRemoteFileNode as jest.Mock).mock.calls.length === 0; i++) {
+      await Promise.resolve();
+    }
+    expect(createRemoteFileNode).toHaveBeenCalledTimes(1);
+
+    // Keep flushing well beyond that point. If createLocalFileNode were fired
+    // and forgotten (not awaited), nothing would block sourceNodes from
+    // finishing here, even though resolveFileNode was never called - so this
+    // is the assertion that actually distinguishes "properly awaited" from
+    // "looked awaited by timing coincidence".
+    for (let i = 0; i < 50; i++) {
+      await Promise.resolve();
+    }
+    expect(sourceNodesResolved).toBe(false);
+
+    resolveFileNode({ id: `file-1` });
+    await sourceNodesPromise;
+    expect(sourceNodesResolved).toBe(true);
+  });
+
   it(`creates an asset node and links its id onto the upload node when imageCdn is set`, async () => {
     const gatsbyApi = buildGatsbyApi();
     (fetchEntities as jest.Mock).mockResolvedValueOnce([
