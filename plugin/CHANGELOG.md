@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.1.2...v1.1.3) (2026-08-12)
+
+
+### Bug Fixes
+
+* **plugin:** revert maxParallelRequests default to unbounded ([#109](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/109)) ([b5a7398](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/b5a7398a6fd093b7a6e42e1cf8398f73197954ae))
+
 ## [1.1.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.1.1...v1.1.2) (2026-08-12)
 
 > **⚠️ Known issue, fixed in 1.1.3**: this release unintentionally changed
