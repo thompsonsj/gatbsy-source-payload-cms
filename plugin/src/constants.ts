@@ -20,14 +20,6 @@ export const PAGE_COUNT_WARNING_THRESHOLD = 20
 export const PROGRESS_LOG_INTERVAL = 10
 
 /**
- * Default cap on requests in flight at once (see axios-instance.ts). Unbounded
- * concurrency on a large, unpaginated fetch can overwhelm the origin API or the
- * machine running the build; this keeps a reasonable default while still being
- * overridable via the `maxParallelRequests` plugin option.
- */
-export const DEFAULT_MAX_PARALLEL_REQUESTS = 10
-
-/**
  * The IDs for your errors can be arbitrary (since they are scoped to your plugin), but it's good practice to have a system for them.
  * For example, you could start all third-party API errors with 1000x, all transformation errors with 2000x, etc.
  */

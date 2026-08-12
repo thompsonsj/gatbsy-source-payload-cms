@@ -109,10 +109,11 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     // Optional. Collection slug where API key access available. Use if your API is protected. If blank, this is set to `users`.
     accessCollectionSlug: Joi.string(),
     /**
-     * Optional. Caps requests in flight at once. Defaults to a moderate value
-     * (see DEFAULT_MAX_PARALLEL_REQUESTS in constants.ts) rather than unbounded.
-     * Lowering this trades wall-clock time for lower API/machine load; raising
-     * it (or raising a collection's page size via `limit`) does the opposite.
+     * Optional. Caps requests in flight at once. Unbounded by default (opt-in
+     * only - existing consumers should never see a behavior change from this
+     * being unset). Lowering this trades wall-clock time for lower API/machine
+     * load; raising a collection's page size via `limit` has a similar effect
+     * in the other direction.
      */
     maxParallelRequests: Joi.number(),
     // Optional. Retry requests using https://www.npmjs.com/package/axios-retry.

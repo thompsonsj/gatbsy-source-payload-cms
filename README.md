@@ -55,7 +55,7 @@ Simple config:
 | `collectionTypes` | `['posts']` | Specifiy collections to retrive along with any collection-specific options. [More](#collection-types). |
 | `globalTypes` | `['nav']` | Specifiy globals to retrive along with any global-specific options. [More](#global-types). |
 | `nodeTransform` | `{ ['myField'] => (myField) => transformMyField(myField) }` | Incorporate functions to transform the value returned for a given Payload field. [More](#node-transform) |
-| `maxParallelRequests` | `10` | Cap requests in flight at once. Defaults to `10`. [More](#performance-maxparallelrequests-and-limit). |
+| `maxParallelRequests` | `10` | Cap requests in flight at once. Unbounded by default. [More](#performance-maxparallelrequests-and-limit). |
 | `retries` | `3` | Retry failed requests using [axios-retry](https://www.npmjs.com/package/axios-retry). |
 
 ### Example
@@ -86,20 +86,30 @@ Simple config:
 
 ### Performance: `maxParallelRequests` and `limit`
 
-`maxParallelRequests` caps how many requests are in flight at once (default:
-`10`). This trades wall-clock sourcing time against load on the origin API and
-the machine running the build:
+`maxParallelRequests` caps how many requests are in flight at once. **It is
+unbounded by default** - existing configs that never set it keep exactly the
+concurrency they always had. This is an opt-in knob, not something you need
+to set to avoid a regression:
 
-- Raising `maxParallelRequests` fetches more pages concurrently, finishing
-  faster but increasing load on the Payload API and memory use during the
-  build.
-- Lowering it reduces that load, at the cost of a longer sourcing step.
+- Setting `maxParallelRequests` reduces load on the Payload API and memory
+  use during the build, at the cost of a longer sourcing step - useful if
+  you're seeing origin API errors or high memory usage during sourcing on a
+  wide/large fetch.
 - A collection's page size (`limit`) interacts with this: a smaller page size
-  means more total pages/requests for the same collection, so lowering
-  `limit` while also lowering `maxParallelRequests` compounds into a much
-  longer build — the plugin logs a warning if a collection's page count looks
+  means more total pages/requests for the same collection, so combining a
+  small `limit` with a low `maxParallelRequests` compounds into a much
+  longer build. The plugin logs a warning if a collection's page count looks
   unexpectedly large, and periodic progress (every 10 pages) while fetching,
   so a slow sourcing step is diagnosable without reading the plugin's source.
+
+> **Note on 1.1.2**: that release briefly defaulted `maxParallelRequests` to
+> `10` instead of unbounded, which could turn a wide sourcing job (many
+> collections x locales) that previously finished comfortably into one that
+> times out, with no config change on the consumer's end. This was a
+> behavioral change that should never have shipped in a patch release, and
+> was reverted in 1.1.3. If you're on 1.1.2, upgrade to 1.1.3 or later, or set
+> `maxParallelRequests` explicitly to restore your desired concurrency in the
+> meantime.
 
 ### Collection Types
 
