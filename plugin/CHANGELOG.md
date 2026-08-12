@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.1.1...v1.1.2) (2026-08-12)
+
+
+### Bug Fixes
+
+* **plugin:** stop small page sizes from silently exploding request counts ([#108](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/108)) ([b805041](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/b805041d8f3663ac242098a3ba56e8a01bbe84ca))
+* **types:** params optional on LocaleObject ([#105](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/105)) ([fe04109](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/fe04109be7b783dc083fabb2c80a7987c6fe1ce7))
+
 ## [1.1.1](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.1.0...v1.1.1) (2025-03-14)
 
 
