@@ -2,6 +2,12 @@
 
 ## [1.1.2](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.1.1...v1.1.2) (2026-08-12)
 
+> **⚠️ Known issue, fixed in 1.1.3**: this release unintentionally changed
+> `maxParallelRequests`'s default from unbounded to `10`. For a sourcing job
+> wide enough (many collections/locales fetched concurrently), this can turn
+> a build that previously completed comfortably into one that times out, with
+> no config change required to trigger it. If you're on 1.1.2, upgrade to
+> 1.1.3 or later, or set `maxParallelRequests` explicitly in the meantime.
 
 ### Bug Fixes
 
