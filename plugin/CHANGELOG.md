@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.4](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.1.3...v1.1.4) (2026-08-12)
+
+
+### Bug Fixes
+
+* **plugin:** add configurable request timeout, make timeouts retryable ([#113](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/113)) ([a8e54ef](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/a8e54efd1503230aeb950c785ff8cc7889a85d23))
+* **plugin:** fix five resilience bugs found via TDD ([#111](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/111)) ([ce12c89](https://github.com/thompsonsj/gatbsy-source-payload-cms/commit/ce12c8943a50a067bf4407d1ec8dc6e3b4df726c))
+
 ## [1.1.3](https://github.com/thompsonsj/gatbsy-source-payload-cms/compare/v1.1.2...v1.1.3) (2026-08-12)
 
 
