@@ -55,6 +55,8 @@ Simple config:
 | `collectionTypes` | `['posts']` | Specifiy collections to retrive along with any collection-specific options. [More](#collection-types). |
 | `globalTypes` | `['nav']` | Specifiy globals to retrive along with any global-specific options. [More](#global-types). |
 | `nodeTransform` | `{ ['myField'] => (myField) => transformMyField(myField) }` | Incorporate functions to transform the value returned for a given Payload field. [More](#node-transform) |
+| `maxParallelRequests` | `10` | Cap requests in flight at once. Defaults to `10`. [More](#performance-maxparallelrequests-and-limit). |
+| `retries` | `3` | Retry failed requests using [axios-retry](https://www.npmjs.com/package/axios-retry). |
 
 ### Example
 
@@ -81,6 +83,23 @@ Simple config:
   },
 },
 ```
+
+### Performance: `maxParallelRequests` and `limit`
+
+`maxParallelRequests` caps how many requests are in flight at once (default:
+`10`). This trades wall-clock sourcing time against load on the origin API and
+the machine running the build:
+
+- Raising `maxParallelRequests` fetches more pages concurrently, finishing
+  faster but increasing load on the Payload API and memory use during the
+  build.
+- Lowering it reduces that load, at the cost of a longer sourcing step.
+- A collection's page size (`limit`) interacts with this: a smaller page size
+  means more total pages/requests for the same collection, so lowering
+  `limit` while also lowering `maxParallelRequests` compounds into a much
+  longer build — the plugin logs a warning if a collection's page count looks
+  unexpectedly large, and periodic progress (every 10 pages) while fetching,
+  so a slow sourcing step is diagnosable without reading the plugin's source.
 
 ### Collection Types
 
@@ -182,7 +201,22 @@ See [REST API | Payload CMS](https://payloadcms.com/docs/rest-api/overview) for 
 
 ### `limit`
 
-Limit number of documents retrieved.
+> **`limit` sets the Payload REST API's page size — it is NOT a cap on the total
+> number of documents retrieved.** It maps directly onto Payload's own `limit`
+> query parameter (documents per page), and setting it also disables this
+> plugin's automatic pagination, so only a single page of that size is fetched.
+>
+> If you want to cap the *total* number of documents fetched for a collection
+> (e.g. for a fast local/dev build, or a quick smoke test), use
+> [`maxDocs`](#maxdocs) instead — setting `limit` to a small value fetches
+> exactly that many documents and no more (pagination is disabled), which
+> silently truncates a large collection rather than sourcing everything.
+>
+> **Do not set `limit` inside `params`** — that's Payload's own REST API query
+> parameter of the same name, and it bypasses this plugin's pagination
+> controls entirely. A small page size set that way, on a large collection,
+> multiplies the number of requests needed to fetch it (the plugin warns via
+> the Gatsby `reporter` if this happens). The same applies to `uploadTypes`.
 
 ```ts
 {
@@ -190,6 +224,7 @@ Limit number of documents retrieved.
   collectionTypes: [
     {
       slug: 'posts',
+      // Fetches (and paginates through) the collection 100 documents at a time.
       limit: 100,
     },
   ]
@@ -197,9 +232,14 @@ Limit number of documents retrieved.
 }
 ```
 
-### Repopulate
+### `maxDocs`
 
-Run a single document query for every document retrieved.
+Stop paginating once at least this many documents have been fetched for the
+collection (per locale, if `locales` is set). Unlike `limit`, this does not
+change the API page size — it just stops requesting further pages once
+enough documents have come back. This is the option to reach for when you
+actually want to cap the total number of documents fetched, e.g. for a
+faster local/dev build.
 
 ```ts
 {
@@ -207,12 +247,18 @@ Run a single document query for every document retrieved.
   collectionTypes: [
     {
       slug: 'posts',
-      repopulate: false,
+      // Fetch only the first ~50 documents, instead of the whole collection.
+      maxDocs: 50,
     },
   ]
   // ...
 }
 ```
+
+If the number of requests needed for a collection/locale combination looks
+unexpectedly large (more than 20 pages), the plugin logs a warning via the
+Gatsby `reporter` before firing any of those requests, rather than only being
+discoverable after the fact.
 
 ### `repopulate`
 

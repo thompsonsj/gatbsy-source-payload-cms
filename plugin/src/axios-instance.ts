@@ -1,5 +1,6 @@
 import axios from "axios"
 import axiosRetry from "axios-retry"
+import { DEFAULT_MAX_PARALLEL_REQUESTS } from "./constants"
 
 /**
  * Inspiration from:
@@ -36,7 +37,15 @@ const throttlingInterceptors = (axiosInstance, maxParallelRequests) => {
 }
 
 export const createAxiosInstance = (pluginConfig) => {
-  const { maxParallelRequests = Number.POSITIVE_INFINITY, accessToken, accessCollectionSlug, apiURL } = pluginConfig
+  const {
+    // Unbounded concurrency on a large fetch can overwhelm the origin API or the
+    // build machine. Raising this (or a smaller `limit`/larger page size) trades
+    // memory/API load for wall-clock time — see the README for the tradeoff.
+    maxParallelRequests = DEFAULT_MAX_PARALLEL_REQUESTS,
+    accessToken,
+    accessCollectionSlug,
+    apiURL,
+  } = pluginConfig
 
   const headers: { [key: string]: string } = {}
 

@@ -5,6 +5,7 @@ const buildContext = (pluginOptions: { [key: string]: unknown } = {}) => ({
   reporter: {
     info: jest.fn(),
     panic: jest.fn(),
+    warn: jest.fn(),
   },
   pluginOptions,
 })
@@ -220,5 +221,145 @@ describe(`fetchEntities`, () => {
     // Doc "a" fails and is dropped; doc "b" still comes through fully repopulated.
     expect(context.reporter.panic).toHaveBeenCalledTimes(1)
     expect(result.map((entity: any) => entity.title)).toEqual([`Full b`])
+  })
+
+  describe(`maxDocs`, () => {
+    it(`stops paginating once enough documents have been fetched (no locales)`, async () => {
+      const context = buildContext()
+      const pages = {
+        1: { docs: [{ id: 1 }, { id: 2 }], page: 1, totalPages: 50 },
+        2: { docs: [{ id: 3 }, { id: 4 }] },
+        3: { docs: [{ id: 5 }, { id: 6 }] },
+      }
+      context.axiosInstance.mockImplementation(async ({ params }) => ({ data: pages[params?.page ?? 1] }))
+
+      const result = await fetchEntities(
+        { endpoint: `http://localhost/api/posts`, type: `Post`, maxDocs: 5 },
+        context
+      )
+
+      // Page size is 2; reaching 5 docs needs pages 1-3, not all 50.
+      expect(context.axiosInstance).toHaveBeenCalledTimes(3)
+      expect(result.map((entity: any) => entity.id)).toEqual([1, 2, 3, 4, 5])
+    })
+
+    it(`does not fetch any extra pages when the first page already meets maxDocs`, async () => {
+      const context = buildContext()
+      context.axiosInstance.mockResolvedValueOnce({
+        data: { docs: [{ id: 1 }, { id: 2 }, { id: 3 }], page: 1, totalPages: 50 },
+      })
+
+      const result = await fetchEntities(
+        { endpoint: `http://localhost/api/posts`, type: `Post`, maxDocs: 2 },
+        context
+      )
+
+      expect(context.axiosInstance).toHaveBeenCalledTimes(1)
+      expect(result.map((entity: any) => entity.id)).toEqual([1, 2])
+    })
+
+    it(`caps documents per locale, not across all locales combined`, async () => {
+      const context = buildContext()
+      context.axiosInstance.mockImplementation(async ({ params }) => {
+        if (!params.locale) return { data: { docs: [], page: 1, totalPages: 1 } }
+        return { data: { docs: [{ id: `${params.locale}-1` }, { id: `${params.locale}-2` }] } }
+      })
+
+      const result = await fetchEntities(
+        { endpoint: `http://localhost/api/posts`, type: `Post`, locales: [`en`, `fr`], maxDocs: 1 },
+        context
+      )
+
+      expect(result.map((entity: any) => entity.id)).toEqual([`en-1`, `fr-1`])
+    })
+
+    it(`only repopulates the capped subset of documents, saving requests`, async () => {
+      const context = buildContext()
+      context.axiosInstance.mockImplementation(async ({ url, params }) => {
+        if (!params.locale) return { data: { docs: [], page: 1, totalPages: 1 } }
+        if (/\/(a|b|c)$/.test(url)) return { data: { id: url.split(`/`).pop() } }
+        return { data: { docs: [{ id: `a` }, { id: `b` }, { id: `c` }] } }
+      })
+
+      await fetchEntities(
+        {
+          endpoint: `http://localhost/api/posts`,
+          type: `Post`,
+          locales: [`en`],
+          maxDocs: 1,
+          repopulate: true,
+        },
+        context
+      )
+
+      const repopulateCalls = context.axiosInstance.mock.calls.filter(([opts]) => /\/(a|b|c)$/.test(opts.url))
+      expect(repopulateCalls).toHaveLength(1)
+    })
+  })
+
+  describe(`warnings`, () => {
+    it(`warns when "limit" is set inside "params" instead of the dedicated option`, async () => {
+      const context = buildContext()
+      context.axiosInstance.mockResolvedValue({ data: { docs: [{ id: 1 }], page: 1, totalPages: 1 } })
+
+      await fetchEntities(
+        { endpoint: `http://localhost/api/posts`, type: `Post`, params: { limit: 1 } },
+        context
+      )
+
+      expect(context.reporter.warn).toHaveBeenCalledWith(expect.stringContaining(`"limit" was set inside "params"`))
+    })
+
+    it(`does not warn about "params.limit" when the dedicated "limit" option is used`, async () => {
+      const context = buildContext()
+      context.axiosInstance.mockResolvedValue({ data: { docs: [{ id: 1 }], page: 1, totalPages: 1 } })
+
+      await fetchEntities({ endpoint: `http://localhost/api/posts`, type: `Post`, limit: 1 }, context)
+
+      expect(context.reporter.warn).not.toHaveBeenCalled()
+    })
+
+    it(`warns before fetching when the number of pages exceeds the safety threshold`, async () => {
+      const context = buildContext()
+      context.axiosInstance.mockImplementation(async ({ params }) => ({
+        data: { docs: [{ id: params?.page ?? 1 }], page: params?.page ?? 1, totalPages: 50 },
+      }))
+
+      await fetchEntities({ endpoint: `http://localhost/api/posts`, type: `Post` }, context)
+
+      expect(context.reporter.warn).toHaveBeenCalledWith(expect.stringContaining(`About to fetch 49 page(s)`))
+      // The warning must fire before requests go out, not just be true in hindsight.
+      const warnCallOrder = context.reporter.warn.mock.invocationCallOrder[0]
+      const firstPageTwoCallOrder = context.axiosInstance.mock.invocationCallOrder[1]
+      expect(warnCallOrder).toBeLessThan(firstPageTwoCallOrder)
+    })
+
+    it(`does not warn when the number of pages is under the safety threshold`, async () => {
+      const context = buildContext()
+      context.axiosInstance.mockImplementation(async ({ params }) => ({
+        data: { docs: [{ id: params?.page ?? 1 }], page: params?.page ?? 1, totalPages: 5 },
+      }))
+
+      await fetchEntities({ endpoint: `http://localhost/api/posts`, type: `Post` }, context)
+
+      expect(context.reporter.warn).not.toHaveBeenCalled()
+    })
+  })
+
+  describe(`progress logging`, () => {
+    it(`logs a progress summary every 10 pages, distinct from the per-request debug line`, async () => {
+      const context = buildContext()
+      context.axiosInstance.mockImplementation(async ({ params }) => ({
+        data: { docs: [{ id: params?.page ?? 1 }], page: params?.page ?? 1, totalPages: 25 },
+      }))
+
+      await fetchEntities({ endpoint: `http://localhost/api/posts`, type: `Post` }, context)
+
+      const progressLogs = context.reporter.info.mock.calls.filter(([message]) => message.includes(`fetched`))
+      expect(progressLogs).toEqual([
+        [expect.stringContaining(`fetched 10/24 page(s)`)],
+        [expect.stringContaining(`fetched 20/24 page(s)`)],
+      ])
+    })
   })
 })

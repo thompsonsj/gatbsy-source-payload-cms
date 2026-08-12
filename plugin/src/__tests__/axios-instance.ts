@@ -1,5 +1,6 @@
 import axiosRetry from "axios-retry"
 import { createAxiosInstance } from "../axios-instance"
+import { DEFAULT_MAX_PARALLEL_REQUESTS } from "../constants"
 
 jest.mock(`axios-retry`, () => {
   const mockAxiosRetry = jest.fn()
@@ -71,6 +72,25 @@ describe(`createAxiosInstance`, () => {
       await jest.advanceTimersByTimeAsync(50)
 
       expect(resolved).toHaveBeenCalledWith(config)
+    })
+
+    it(`defaults maxParallelRequests to a bounded value rather than unlimited`, async () => {
+      const instance = createAxiosInstance({})
+      const requestInterceptor = (instance.interceptors.request as any).handlers[0].fulfilled
+
+      const resolvedCount = { current: 0 }
+      // Intentionally not awaited as a whole - the request beyond the default
+      // limit never resolves in this test, since nothing frees its slot.
+      Array.from({ length: DEFAULT_MAX_PARALLEL_REQUESTS + 1 }, (_, index) =>
+        requestInterceptor({ url: `/${index}` }).then(() => {
+          resolvedCount.current += 1
+        })
+      )
+
+      await jest.advanceTimersByTimeAsync(50)
+
+      // Exactly the default number of slots are available; one request must still be queued.
+      expect(resolvedCount.current).toEqual(DEFAULT_MAX_PARALLEL_REQUESTS)
     })
 
     it(`queues requests beyond the parallel limit until a slot frees up`, async () => {
