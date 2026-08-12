@@ -1,5 +1,18 @@
 import axios from "axios"
 import axiosRetry from "axios-retry"
+import { DEFAULT_REQUEST_TIMEOUT_MS } from "./constants"
+
+/**
+ * axios-retry's own isRetryableError explicitly excludes ECONNABORTED (timeout)
+ * errors - "Prevents retrying timed out requests" - a deliberate default on its
+ * part. For this plugin, a request that timed out against a possibly
+ * transiently-slow Payload instance is exactly the case we want retried, so
+ * this is a superset: everything axios-retry's own logic treats as retryable,
+ * plus timeouts.
+ */
+const isRetryableIncludingTimeouts = (error): boolean => {
+  return error.code === `ECONNABORTED` || axiosRetry.isRetryableError(error)
+}
 
 /**
  * Inspiration from:
@@ -43,6 +56,13 @@ export const createAxiosInstance = (pluginConfig) => {
     // origin API or the build machine, at the cost of wall-clock time — see the
     // README for the tradeoff.
     maxParallelRequests: configuredMaxParallelRequests = Number.POSITIVE_INFINITY,
+    // Without a timeout, a stalled connection (no RST/FIN, a black-holed
+    // response, a proxy silently dropping the connection) never fails - so it
+    // never gets retried, and nothing on the client side ever gives up on it.
+    // The only backstop becomes whatever external timeout a CI platform
+    // enforces, which is both far too long to be useful and outside this
+    // plugin's control.
+    requestTimeout: configuredRequestTimeout = DEFAULT_REQUEST_TIMEOUT_MS,
     accessToken,
     accessCollectionSlug,
     apiURL,
@@ -57,6 +77,14 @@ export const createAxiosInstance = (pluginConfig) => {
       ? configuredMaxParallelRequests
       : Number.POSITIVE_INFINITY
 
+  // Same defense-in-depth as maxParallelRequests above: a value of 0 is
+  // axios's own convention for "no timeout", which would silently reintroduce
+  // the exact hang this option exists to prevent.
+  const requestTimeout =
+    isFinite(configuredRequestTimeout) && configuredRequestTimeout >= 1
+      ? configuredRequestTimeout
+      : DEFAULT_REQUEST_TIMEOUT_MS
+
   const headers: { [key: string]: string } = {}
 
   if (accessToken) {
@@ -66,6 +94,7 @@ export const createAxiosInstance = (pluginConfig) => {
   const instance = axios.create({
     baseURL: apiURL,
     headers,
+    timeout: requestTimeout,
   })
   if (pluginConfig.retries) {
     // https://github.com/softonic/axios-retry/issues/87
@@ -78,8 +107,19 @@ export const createAxiosInstance = (pluginConfig) => {
     axiosRetry(instance, {
       retries: pluginConfig.retries,
       retryDelay,
-      // retry on Network Error & 5xx responses
-      retryCondition: axiosRetry.isRetryableError,
+      // Retry on network errors, 5xx responses, and timeouts (see
+      // isRetryableIncludingTimeouts above for why timeouts are included).
+      retryCondition: isRetryableIncludingTimeouts,
+      // Without this, axios-retry treats the original request's `timeout` as a
+      // TOTAL budget shared across the initial attempt + delay + retry, not a
+      // per-attempt timeout: it computes `config.timeout - elapsedTime - delay`
+      // as the "remaining" timeout for the retry, and silently abandons the
+      // retry if that's <= 0. A request that failed BY timing out has elapsed
+      // time ≈ its own timeout, so that's always negative - meaning a timed-out
+      // request could never actually be retried regardless of retryCondition,
+      // even with the override above. shouldResetTimeout gives each retry its
+      // own fresh timeout instead.
+      shouldResetTimeout: true,
     })
   }
 

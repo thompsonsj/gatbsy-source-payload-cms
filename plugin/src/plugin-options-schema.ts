@@ -118,6 +118,16 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     // A value of 0 or below would deadlock the throttling interceptor - every
     // request would wait forever for a free slot that can never exist.
     maxParallelRequests: Joi.number().integer().min(1),
+    /**
+     * Optional. Milliseconds to wait for a request before aborting it. Defaults
+     * to a sane value (see DEFAULT_REQUEST_TIMEOUT_MS in constants.ts) rather
+     * than no timeout at all - without one, a stalled connection (no RST/FIN,
+     * a black-holed response, a proxy silently dropping the connection) never
+     * fails, so it never gets retried and never gives up: nothing on the
+     * client side ever moves on from it. A value of 0 would disable the
+     * timeout entirely (axios's own convention), reintroducing that hang.
+     */
+    requestTimeout: Joi.number().integer().min(1),
     // Optional. Retry requests using https://www.npmjs.com/package/axios-retry.
     retries: Joi.number(),
     fallbackLocale: Joi.string(),

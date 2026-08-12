@@ -102,4 +102,35 @@ describe(`pluginOptionsSchema`, () => {
     expect(isValid).toBe(true)
     expect(errors).toEqual([])
   })
+  it(`rejects a requestTimeout of 0, which would disable the request timeout entirely`, async () => {
+    const options = {
+      endpoint: `http://localhost:4000/graphql`,
+      requestTimeout: 0,
+    }
+
+    const { isValid } = await testPluginOptionsSchema(pluginOptionsSchema, options)
+
+    expect(isValid).toBe(false)
+  })
+  it(`rejects a negative requestTimeout`, async () => {
+    const options = {
+      endpoint: `http://localhost:4000/graphql`,
+      requestTimeout: -1,
+    }
+
+    const { isValid } = await testPluginOptionsSchema(pluginOptionsSchema, options)
+
+    expect(isValid).toBe(false)
+  })
+  it(`accepts a positive integer requestTimeout`, async () => {
+    const options = {
+      endpoint: `http://localhost:4000/graphql`,
+      requestTimeout: 5000,
+    }
+
+    const { isValid, errors } = await testPluginOptionsSchema(pluginOptionsSchema, options)
+
+    expect(isValid).toBe(true)
+    expect(errors).toEqual([])
+  })
 })

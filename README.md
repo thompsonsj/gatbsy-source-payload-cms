@@ -56,6 +56,7 @@ Simple config:
 | `globalTypes` | `['nav']` | Specifiy globals to retrive along with any global-specific options. [More](#global-types). |
 | `nodeTransform` | `{ ['myField'] => (myField) => transformMyField(myField) }` | Incorporate functions to transform the value returned for a given Payload field. [More](#node-transform) |
 | `maxParallelRequests` | `10` | Cap requests in flight at once. Unbounded by default. [More](#performance-maxparallelrequests-and-limit). |
+| `requestTimeout` | `30000` | Milliseconds to wait for a request before aborting it. Defaults to `30000` (30s). [More](#requesttimeout). |
 | `retries` | `3` | Retry failed requests using [axios-retry](https://www.npmjs.com/package/axios-retry). |
 
 ### Example
@@ -110,6 +111,32 @@ to set to avoid a regression:
 > was reverted in 1.1.3. If you're on 1.1.2, upgrade to 1.1.3 or later, or set
 > `maxParallelRequests` explicitly to restore your desired concurrency in the
 > meantime.
+
+### `requestTimeout`
+
+Milliseconds to wait for a single request before aborting it. Defaults to
+`30000` (30s).
+
+Without a timeout, a stalled connection (a dropped proxy, a black-holed
+response, a server that accepts the connection but never replies) never
+fails - and if it never fails, it's never retried, and nothing on the client
+side ever gives up on it. The only backstop becomes whatever external timeout
+your CI platform enforces, which is both far slower than useful and outside
+this plugin's control.
+
+```ts
+{
+  // ...
+  requestTimeout: 15000, // fail a stalled request after 15s instead of 30s
+  // ...
+}
+```
+
+If `retries` is also set, a request that failed by timing out is retried, not
+just network errors and 5xx responses - useful against a Payload instance
+that's transiently slow rather than actually down. This is a deliberate
+departure from [axios-retry](https://www.npmjs.com/package/axios-retry)'s own
+default, which explicitly excludes timeouts from its retry logic.
 
 ### Collection Types
 
