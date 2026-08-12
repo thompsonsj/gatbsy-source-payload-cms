@@ -29,8 +29,16 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
             })),
           ),
           params: Joi.object(),
-          /** Override limit in query params and disable paginated query */
+          /**
+           * Sets the Payload REST API's own `limit` query param, i.e. the number of
+           * documents requested PER PAGE - not a cap on the total number of documents
+           * returned. Also disables this plugin's automatic pagination, so only the
+           * first page (of this size) is fetched. To cap total documents fetched, use
+           * `maxDocs` instead.
+           */
           limit: Joi.number(),
+          /** Stop paginating once at least this many documents have been fetched. Unlike `limit`, does not change the API page size. */
+          maxDocs: Joi.number(),
           /** Repopulate results with a query on each result. Use with caution - can significantly increase the number of API calls. Included to get around an issue where the depth parameter is not always respected on paginated queries. */
           /* Currently only supported for queries with locales */
           repopulate: Joi.boolean(),
@@ -56,7 +64,7 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
             })),
           ),
           params: Joi.object(),
-          /** Override limit in query params and disable paginated query */
+          /** Sets the Payload REST API's own `limit` query param. Globals are singleton documents, so this rarely matters. */
           limit: Joi.number(),
           /** Defaults to `globals/:slug` */
           apiPath: Joi.string(),
@@ -81,8 +89,16 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
             })),
           ),
           params: Joi.object(),
-          /** Override limit in query params and disable paginated query */
+          /**
+           * Sets the Payload REST API's own `limit` query param, i.e. the number of
+           * documents requested PER PAGE - not a cap on the total number of documents
+           * returned. Also disables this plugin's automatic pagination, so only the
+           * first page (of this size) is fetched. To cap total documents fetched, use
+           * `maxDocs` instead.
+           */
           limit: Joi.number(),
+          /** Stop paginating once at least this many documents have been fetched. Unlike `limit`, does not change the API page size. */
+          maxDocs: Joi.number(),
           /** Optional. Retrieve an image size. If blank, the original URL will be returned. */
           imageSize: Joi.string(),
         })
@@ -92,7 +108,12 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     accessToken: Joi.string(),
     // Optional. Collection slug where API key access available. Use if your API is protected. If blank, this is set to `users`.
     accessCollectionSlug: Joi.string(),
-    // Optional. Throttle parallel requests.
+    /**
+     * Optional. Caps requests in flight at once. Defaults to a moderate value
+     * (see DEFAULT_MAX_PARALLEL_REQUESTS in constants.ts) rather than unbounded.
+     * Lowering this trades wall-clock time for lower API/machine load; raising
+     * it (or raising a collection's page size via `limit`) does the opposite.
+     */
     maxParallelRequests: Joi.number(),
     // Optional. Retry requests using https://www.npmjs.com/package/axios-retry.
     retries: Joi.number(),
