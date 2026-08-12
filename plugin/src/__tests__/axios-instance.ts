@@ -1,5 +1,6 @@
 import axiosRetry from "axios-retry"
 import { createAxiosInstance } from "../axios-instance"
+import { DEFAULT_REQUEST_TIMEOUT_MS } from "../constants"
 
 jest.mock(`axios-retry`, () => {
   const mockAxiosRetry = jest.fn()
@@ -42,13 +43,67 @@ describe(`createAxiosInstance`, () => {
     expect(axiosRetry).toHaveBeenCalledTimes(1)
     const [, config] = (axiosRetry as unknown as jest.Mock).mock.calls[0]
     expect(config.retries).toEqual(3)
-    expect(config.retryCondition).toBe((axiosRetry as any).isRetryableError)
+    expect(config.retryCondition).toBeInstanceOf(Function)
+    // Without this, axios-retry treats the request's timeout as a total budget
+    // across the initial attempt + delay + retry, and silently abandons any
+    // retry of a request that failed by timing out (elapsed time ≈ its own
+    // timeout, so the "remaining" budget it computes is always <= 0) -
+    // regardless of what retryCondition says. See axios-instance-hung-connection.ts
+    // for the real-server test this exists to make actually work end to end.
+    expect(config.shouldResetTimeout).toBe(true)
   })
 
   it(`always attaches a throttling request interceptor`, () => {
     const instance = createAxiosInstance({})
     expect((instance.interceptors.request as any).handlers).toHaveLength(1)
     expect((instance.interceptors.response as any).handlers).toHaveLength(1)
+  })
+
+  describe(`requestTimeout`, () => {
+    it(`defaults the request timeout to DEFAULT_REQUEST_TIMEOUT_MS`, () => {
+      // Without a timeout, a stalled connection never fails - so it never gets
+      // retried, and nothing on the client side ever gives up on it.
+      const instance = createAxiosInstance({})
+      expect(instance.defaults.timeout).toEqual(DEFAULT_REQUEST_TIMEOUT_MS)
+    })
+
+    it(`honors a configured requestTimeout`, () => {
+      const instance = createAxiosInstance({ requestTimeout: 5000 })
+      expect(instance.defaults.timeout).toEqual(5000)
+    })
+
+    it.each([0, -1, -100])(
+      `falls back to the default when requestTimeout is %i (Joi rejects this, but the runtime shouldn't silently disable the timeout either)`,
+      (invalidValue) => {
+        const instance = createAxiosInstance({ requestTimeout: invalidValue })
+        expect(instance.defaults.timeout).toEqual(DEFAULT_REQUEST_TIMEOUT_MS)
+      }
+    )
+  })
+
+  describe(`retryCondition`, () => {
+    it(`treats a timed-out request (ECONNABORTED) as retryable, unlike axios-retry's own default`, () => {
+      // axios-retry's isRetryableError explicitly excludes ECONNABORTED
+      // ("Prevents retrying timed out requests") - for this plugin, a request
+      // that timed out against a possibly transiently-slow Payload instance is
+      // exactly the case we DO want retried, so this overrides that default.
+      ;(axiosRetry.isRetryableError as jest.Mock).mockReturnValue(false)
+      createAxiosInstance({ retries: 3 })
+      const [, config] = (axiosRetry as unknown as jest.Mock).mock.calls[0]
+
+      expect(config.retryCondition({ code: `ECONNABORTED` })).toBe(true)
+    })
+
+    it(`still delegates to axios-retry's own logic for non-timeout errors`, () => {
+      ;(axiosRetry.isRetryableError as jest.Mock).mockReturnValue(false)
+      createAxiosInstance({ retries: 3 })
+      const [, config] = (axiosRetry as unknown as jest.Mock).mock.calls[0]
+
+      expect(config.retryCondition({ response: { status: 404 } })).toBe(false)
+
+      ;(axiosRetry.isRetryableError as jest.Mock).mockReturnValue(true)
+      expect(config.retryCondition({ response: { status: 503 } })).toBe(true)
+    })
   })
 
   describe(`throttling`, () => {
