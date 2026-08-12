@@ -177,7 +177,7 @@ export const sourceNodes: GatsbyNode[`sourceNodes`] = async (gatsbyApi, pluginOp
     for (const upload of result) {
       let imageCdnId
       if (pluginOptions.localFiles) {
-        createLocalFileNode(context, upload, relationshipIds)
+        await createLocalFileNode(context, upload, relationshipIds)
       }
       if (pluginOptions.imageCdn) {
         imageCdnId = await createAssetNode(context, upload, relationshipIds)

@@ -73,6 +73,21 @@ describe(`createAxiosInstance`, () => {
       expect(resolved).toHaveBeenCalledWith(config)
     })
 
+    it.each([0, -1, -100])(
+      `does not deadlock when maxParallelRequests is %i (Joi rejects this, but the runtime shouldn't hang either)`,
+      async (invalidValue) => {
+        const instance = createAxiosInstance({ maxParallelRequests: invalidValue })
+        const requestInterceptor = (instance.interceptors.request as any).handlers[0].fulfilled
+
+        const resolved = jest.fn()
+        requestInterceptor({ url: `/foo` }).then(resolved)
+
+        await jest.advanceTimersByTimeAsync(50)
+
+        expect(resolved).toHaveBeenCalled()
+      }
+    )
+
     it(`defaults maxParallelRequests to unbounded, matching pre-1.1.2 behavior`, async () => {
       // Regression test for a bug shipped in 1.1.2: defaulting this to a bounded
       // value (10) turned a wide sourcing job (many collections x locales,

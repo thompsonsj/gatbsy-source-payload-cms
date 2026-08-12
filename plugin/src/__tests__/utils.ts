@@ -111,6 +111,16 @@ describe(`fn: normalizeCollections`, () => {
       },
     ])
   })
+  it(`does not drop the endpoint's path when it is missing a trailing slash`, () => {
+    // new URL('posts', 'http://x/api') resolves to 'http://x/posts', silently
+    // dropping "/api" - a missing trailing slash on `endpoint` must not do this.
+    expect(normalizeCollections([`posts`], `http://localhost:8000/api`)).toEqual([
+      {
+        endpoint: `http://localhost:8000/api/posts`,
+        type: `posts`,
+      },
+    ])
+  })
 })
 
 describe(`fn: normalizeGlobals`, () => {
@@ -191,6 +201,14 @@ describe(`fn: normalizeGlobals`, () => {
         endpoint: `http://localhost:8000/api/header/icu`,
         slug: `nav`,
         apiPath: `header/icu`,
+        type: `nav`,
+      },
+    ])
+  })
+  it(`does not drop the endpoint's path when it is missing a trailing slash`, () => {
+    expect(normalizeGlobals([`nav`], `http://localhost:8000/api`)).toEqual([
+      {
+        endpoint: `http://localhost:8000/api/globals/nav`,
         type: `nav`,
       },
     ])

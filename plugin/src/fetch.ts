@@ -188,7 +188,11 @@ export const fetchEntity = async (query: CollectionOptions, context) => {
       ]
     }
   } catch (error) {
-    if (error.response.status !== 404) {
+    // Network-level failures (DNS, connection refused, timeout) have no `.response`
+    // at all - only HTTP error responses do. Guard the optional chain rather than
+    // assuming `.response` exists, so those still panic with a clear message
+    // instead of crashing on `Cannot read properties of undefined`.
+    if (error.response?.status !== 404) {
       reporter.panic(`Failed to fetch data from Payload ${options.url} with ${JSON.stringify(options)}`, error)
     }
     return []
@@ -387,7 +391,7 @@ export const fetchEntities = async (query: CollectionOptions, context) => {
 
       const results = await Promise.all(fetchPagesPromises)
 
-      const combinedData = [...data, ...flattenDeep(results).filter(Boolean)]
+      const combinedData = [...data.filter(Boolean), ...flattenDeep(results).filter(Boolean)]
       const cleanedData = (isNumber(query.maxDocs) ? combinedData.slice(0, query.maxDocs) : combinedData)
         .map((entry) =>
           formatEntity(
