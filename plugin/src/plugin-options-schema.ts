@@ -141,5 +141,32 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }):
     imageCdn: Joi.boolean(),
     /** A base URL for constructing imageUrls. Required for `localFiles`. */
     baseUrl: Joi.string().when(`localFiles`, { is: true, then: Joi.string().required() }),
+    /**
+     * Optional. Static GraphQL SDL for createTypes. Takes precedence over fetchSchema.
+     * Typically the output of Payload's /api/gatsby-schema-types endpoint.
+     */
+    schemaCustomizations: Joi.string(),
+    /**
+     * Optional. Union resolve metadata to pair with schemaCustomizations.
+     * Prefer fetchSchema, which loads this from the Payload plugin automatically.
+     */
+    schemaUnions: Joi.array().items(
+      Joi.object({
+        name: Joi.string().required(),
+        types: Joi.array().items(Joi.string()).required(),
+        typeMap: Joi.object().pattern(Joi.string(), Joi.string()).required(),
+      })
+    ),
+    /**
+     * Optional. Fetch Gatsby-ready SDL (+ union resolve metadata) from
+     * payload-plugin-gatsby-source at build time. Requires that plugin on the
+     * Payload side. Ignored when schemaCustomizations is set.
+     */
+    fetchSchema: Joi.boolean(),
+    /**
+     * Optional. Path under endpoint for the schema SDL.
+     * @default gatsby-schema-types
+     */
+    schemaPath: Joi.string(),
   })
 }

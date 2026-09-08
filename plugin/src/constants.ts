@@ -34,4 +34,8 @@ export const DEFAULT_REQUEST_TIMEOUT_MS = 30000
  */
 export const ERROR_CODES = {
   GraphQLSourcing: `10000`,
+  SchemaCustomization: `10001`,
 } as const
+
+/** Default path (relative to `endpoint`) for Payload's Gatsby schema SDL endpoint. */
+export const DEFAULT_SCHEMA_PATH = `gatsby-schema-types`

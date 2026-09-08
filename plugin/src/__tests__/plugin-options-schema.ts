@@ -133,4 +133,48 @@ describe(`pluginOptionsSchema`, () => {
     expect(isValid).toBe(true)
     expect(errors).toEqual([])
   })
+
+  it(`accepts fetchSchema and schemaPath`, async () => {
+    const options = {
+      endpoint: `http://localhost:4000/api/`,
+      fetchSchema: true,
+      schemaPath: `gatsby-schema-types`,
+    }
+
+    const { isValid, errors } = await testPluginOptionsSchema(pluginOptionsSchema, options)
+
+    expect(isValid).toBe(true)
+    expect(errors).toEqual([])
+  })
+
+  it(`accepts schemaCustomizations SDL`, async () => {
+    const options = {
+      endpoint: `http://localhost:4000/api/`,
+      schemaCustomizations: `type LandingPage implements Node { title: String }`,
+    }
+
+    const { isValid, errors } = await testPluginOptionsSchema(pluginOptionsSchema, options)
+
+    expect(isValid).toBe(true)
+    expect(errors).toEqual([])
+  })
+
+  it(`accepts schemaUnions metadata`, async () => {
+    const options = {
+      endpoint: `http://localhost:4000/api/`,
+      schemaCustomizations: `union LandingPage_Layout = ContentLayout`,
+      schemaUnions: [
+        {
+          name: `LandingPage_Layout`,
+          types: [`ContentLayout`],
+          typeMap: { contentLayout: `ContentLayout` },
+        },
+      ],
+    }
+
+    const { isValid, errors } = await testPluginOptionsSchema(pluginOptionsSchema, options)
+
+    expect(isValid).toBe(true)
+    expect(errors).toEqual([])
+  })
 })

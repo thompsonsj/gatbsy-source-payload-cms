@@ -69,7 +69,43 @@ export interface IGlobalTypeObject extends ICollectionTypeObject {
 
 interface IPluginOptionsKeys {
   endpoint: string
+  /**
+   * Static SDL passed to Gatsby's `createTypes`. Takes precedence over `fetchSchema`.
+   * Useful for offline builds or when pasting output from `/api/gatsby-schema-types`.
+   */
   schemaCustomizations?: string
+  /**
+   * Optional union resolve metadata to pair with static `schemaCustomizations`.
+   * Prefer `fetchSchema` which loads this automatically from the Payload plugin.
+   */
+  schemaUnions?: Array<{
+    name: string
+    types: string[]
+    typeMap: Record<string, string>
+  }>
+  /**
+   * When true, fetch Gatsby-ready SDL (+ union resolve metadata) from the Payload
+   * `payload-plugin-gatsby-source` endpoint during `createSchemaCustomization`.
+   * Ignored when `schemaCustomizations` is set.
+   * @default false
+   */
+  fetchSchema?: boolean
+  /**
+   * Path under `endpoint` for the schema SDL (no leading slash required).
+   * @default 'gatsby-schema-types'
+   */
+  schemaPath?: string
+  accessToken?: string
+  accessCollectionSlug?: string
+  nodePrefix?: string
+  imageCdn?: boolean
+  localFiles?: boolean
+  baseUrl?: string
+  maxParallelRequests?: number
+  requestTimeout?: number
+  retries?: number
+  fallbackLocale?: string
+  nodeTransform?: (data: { [key: string]: unknown }) => { [key: string]: unknown }
   globalTypes?: Array<string | IGlobalTypeObject>
   collectionTypes?: Array<string | ICollectionTypeObject>
   uploadTypes?: Array<string | IUploadTypeObject>
