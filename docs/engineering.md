@@ -26,3 +26,15 @@ Schema customization:
 - Payload plugin endpoint returns SDL + union resolve metadata (`?format=json`)
 - Gatsby `fetchSchema` registers SDL and auto-builds union `resolveType` from
   Payload discriminants (`blockType` / `collection` / `relationTo`)
+
+## Releases
+
+[release-please](https://github.com/googleapis/release-please) maintains separate
+release PRs for:
+
+- `plugin` → `gatsby-source-payload-cms`
+- `payload-plugin` → `payload-plugin-gatsby-source`
+
+When a release PR merges, CI publishes that package to npm. Requires a repository
+secret `NPM_TOKEN` (Automation or Publish token from npmjs.com with publish
+rights on both package names).
