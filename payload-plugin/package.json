@@ -1,38 +1,50 @@
 {
   "name": "payload-plugin-gatsby-source",
   "description": "Expose GraphQL types for Gatsby installations using a custom endpoint.",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "license": "MIT",
+  "type": "module",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
-    "./dist/*",
-    "index.js"
+    "dist"
   ],
   "scripts": {
     "clean": "del-cli dist",
     "build": "tsc",
     "develop": "tsc --watch",
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "prepare": "npm run clean && npm run build"
   },
   "keywords": [
     "gatsby",
     "gatsby-plugin",
-    "payload-cms"
+    "payload-cms",
+    "payload-plugin"
   ],
   "devDependencies": {
-    "payload": "^2",
+    "@payloadcms/graphql": "^3.0.0",
+    "@types/jest": "^29.5.3",
+    "del-cli": "^5.0.0",
+    "graphql": "^16.8.1",
+    "jest": "^29.6.2",
+    "payload": "^3.0.0",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.3.2"
   },
   "peerDependencies": {
-    "payload": "^2"
+    "@payloadcms/graphql": "^3.0.0",
+    "graphql": "^16.0.0",
+    "payload": "^3.0.0"
   },
   "engines": {
-    "node": ">=16.0.0"
-  },
-  "dependencies": {
-    "@graphql-tools/schema": "^10.0.2",
-    "gatsby-source-payload-cms": "*",
-    "graphql": "^16.8.1"
+    "node": ">=18.0.0"
   }
 }

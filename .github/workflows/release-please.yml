@@ -14,12 +14,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v3
+        id: release-plugin
         with:
           release-type: node
-          package-name: release-please-action
+          package-name: gatsby-source-payload-cms
           path: plugin
+
       - uses: google-github-actions/release-please-action@v3
+        id: release-payload-plugin
         with:
           release-type: node
-          package-name: release-please-action
+          package-name: payload-plugin-gatsby-source
           path: payload-plugin
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release-plugin.outputs.release_created || steps.release-payload-plugin.outputs.release_created }}
+
+      - uses: actions/setup-node@v4
+        if: ${{ steps.release-plugin.outputs.release_created || steps.release-payload-plugin.outputs.release_created }}
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org
+          cache: yarn
+
+      - name: Install dependencies
+        if: ${{ steps.release-plugin.outputs.release_created || steps.release-payload-plugin.outputs.release_created }}
+        run: yarn install --immutable
+
+      - name: Publish gatsby-source-payload-cms
+        if: ${{ steps.release-plugin.outputs.release_created }}
+        working-directory: plugin
+        run: |
+          yarn build
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish payload-plugin-gatsby-source
+        if: ${{ steps.release-payload-plugin.outputs.release_created }}
+        working-directory: payload-plugin
+        run: |
+          yarn build
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

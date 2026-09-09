@@ -16,5 +16,10 @@ export const onPluginInit: GatsbyNode[`onPluginInit`] = ({ reporter }) => {
       level: `ERROR`,
       category: `THIRD_PARTY`,
     },
+    [ERROR_CODES.SchemaCustomization]: {
+      text: (context) => `${context.sourceMessage}`,
+      level: `ERROR`,
+      category: `THIRD_PARTY`,
+    },
   })
 }

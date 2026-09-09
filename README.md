@@ -58,6 +58,11 @@ Simple config:
 | `maxParallelRequests` | `10` | Cap requests in flight at once. Unbounded by default. [More](#performance-maxparallelrequests-and-limit). |
 | `requestTimeout` | `30000` | Milliseconds to wait for a request before aborting it. Defaults to `30000` (30s). [More](#requesttimeout). |
 | `retries` | `3` | Retry failed requests using [axios-retry](https://www.npmjs.com/package/axios-retry). |
+| `fetchSchema` | `false` | Fetch Gatsby-ready SDL **and** union resolve metadata from Payload’s `payload-plugin-gatsby-source` endpoint. [More](#schema-customization). |
+| `schemaPath` | `gatsby-schema-types` | Path under `endpoint` for the schema SDL. |
+| `schemaCustomizations` | — | Static SDL string for `createTypes`. Takes precedence over `fetchSchema`. |
+| `schemaUnions` | — | Optional union resolve metadata to pair with static `schemaCustomizations`. Prefer `fetchSchema`. |
+| `nodePrefix` | `Payload` | Prefix for Gatsby node type names. Must match `nodePrefix` on `payload-plugin-gatsby-source` when using fetched SDL. |
 
 ### Example
 
@@ -461,6 +466,54 @@ A function can be defined in the plugin options to transform field values in a P
 ```
 
 Node transform functions run before [reserved properties](#reserved-properties) are set. This allows you to access any information that may be overwritten by reserved properties: e.g. a `locale` field.
+
+## Schema customization
+
+For explicit Gatsby types that match your Payload collections/globals, install
+[`payload-plugin-gatsby-source`](./payload-plugin) on the CMS and either:
+
+1. **Fetch at build time** (recommended when the CMS is reachable during `gatsby build`):
+
+```ts
+{
+  resolve: `gatsby-source-payload-cms`,
+  options: {
+    endpoint: `https://yourapp.payload.app/api/`,
+    fetchSchema: true,
+    // Must match payload-plugin-gatsby-source `nodePrefix` (Payload default is ``)
+    nodePrefix: ``,
+    collectionTypes: [`posts`],
+  },
+},
+```
+
+`fetchSchema` loads a JSON bundle (`sdl` + `unions`) and registers:
+
+- the SDL via `createTypes`
+- each union via `schema.buildUnionType` with a `resolveType` that uses Payload
+  discriminants (`blockType`, `collection`, `relationTo`, or a single-member fallback)
+
+That removes the need for most site-level block/relationship `buildUnionType` boilerplate.
+
+2. **Paste statically** — open `/api/gatsby-schema-types`, copy the SDL, and pass it as
+   `schemaCustomizations` (useful for offline/CI without CMS access). Optionally pass
+   matching `schemaUnions` from `?format=json`. Static SDL wins over `fetchSchema`
+   when both are set.
+
+`nodePrefix` on both plugins must agree. The Payload plugin defaults to `''`; this
+Gatsby plugin defaults to `Payload` — set one side so type names match the nodes you
+source.
+
+### What still needs site code
+
+Union automation does **not** cover:
+
+- Custom `nodeModel.findOne` relationship / image CDN field resolvers
+- Heuristic `resolveType` (e.g. choosing a type from a URL)
+- Locale-aware reference lookups
+- Extra CDN fields beyond the plugin’s `imageCdn` option
+
+See [issue #12](https://github.com/thompsonsj/gatbsy-source-payload-cms/issues/12).
 
 ## Reserved properties
 
